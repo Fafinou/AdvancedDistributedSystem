@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>se.sics.kompics</groupId>
 	<artifactId>tutorial</artifactId>
-	<name>Kompics Tutorial</name>
+	<name>FailureDetector</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<description>Kompics Tutorial</description>
 

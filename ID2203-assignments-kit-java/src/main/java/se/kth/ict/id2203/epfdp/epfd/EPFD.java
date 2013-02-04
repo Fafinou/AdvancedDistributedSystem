@@ -97,7 +97,7 @@ public class EPFD extends ComponentDefinition {
             period = timeDelay;
             self = e.getTopology().getSelfAddress();
             allNodes = e.getTopology().getNeighbors(self);
-            alive = new HashSet<Address>();
+            alive = new HashSet<Address>(allNodes);
             suspected = new HashSet<Address>();
             
             /*start timers*/
@@ -132,7 +132,7 @@ public class EPFD extends ComponentDefinition {
     Handler<CheckTimeOut> handleCheckTimeOut = new Handler<CheckTimeOut>() {
         @Override
         public void handle(CheckTimeOut e) {
-            if(intersectionIsEmpty(alive, suspected)){
+            if(!intersectionIsEmpty(alive, suspected)){
                 period = period + periodIncreaser;
             }
             Iterator<Address> iterNodes = allNodes.iterator();

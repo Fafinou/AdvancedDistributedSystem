@@ -88,7 +88,7 @@ public class Assignment1bMain extends ComponentDefinition{
         trigger(new DelayDropLinkInit(topology, 42), flp2p.control());
         trigger(new Application1bInit(commandScript, neighborSet, self), app
                 .control());
-        trigger(new EPFDinit(topology, 500, 50),
+        trigger(new EPFDinit(topology, 100, 100),
                 epfd.control());
 
         // connect the components

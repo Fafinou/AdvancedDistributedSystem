@@ -41,15 +41,15 @@ public final class Assignment1abExecutor {
 
         Topology topology2 = new Topology() {
             {
-                node(1, "127.0.0.1", 22031);
-                node(2, "127.0.0.1", 22032);
-                node(3, "127.0.0.1", 22033);
-                node(4, "127.0.0.1", 22034);
-                node(5, "127.0.0.1", 22035);
-                link(1, 2, 800, 0).bidirectional();
-                link(2, 3, 250, 0);
-                link(4, 2, 1500, 0.5);
-                defaultLinks(500, 0);
+                node(1, "127.0.0.1", 22036);
+                node(2, "127.0.0.1", 22037);
+                node(3, "127.0.0.1", 22038);
+                node(4, "127.0.0.1", 22039);
+                node(5, "127.0.0.1", 22040);
+                //link(1, 2, 800, 0).bidirectional();
+                //link(2, 3, 250, 0);
+                //link(4, 2, 1500, 0.5);
+                defaultLinks(1000, 0);
             }
         };
 

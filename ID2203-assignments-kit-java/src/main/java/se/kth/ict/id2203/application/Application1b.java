@@ -3,7 +3,6 @@
  * and open the template in the editor.
  */
 package se.kth.ict.id2203.application;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.console.Console;
 import se.kth.ict.id2203.console.ConsoleLine;
+import se.kth.ict.id2203.epfdp.EventuallyPerfectFailureDetector;
+import se.kth.ict.id2203.epfdp.Restore;
+import se.kth.ict.id2203.epfdp.Suspect;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.Flp2pSend;
 import se.kth.ict.id2203.pfdp.Crash;
@@ -27,16 +29,14 @@ import se.sics.kompics.Start;
 import se.sics.kompics.address.Address;
 import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
-
 /**
  *
  * @author fingolfin
  */
-public class Application1a extends ComponentDefinition {
+public class Application1b extends ComponentDefinition {
     
     Positive<Timer> timer = requires(Timer.class);
-    Positive<PerfectFailureDetector> pfd = requires(PerfectFailureDetector.class);
-    //Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
+    Positive<EventuallyPerfectFailureDetector> epfd = requires(EventuallyPerfectFailureDetector.class);
     Positive<Console> con = requires(Console.class);
     private static final Logger logger =
             LoggerFactory.getLogger(Application1a.class);
@@ -48,17 +48,18 @@ public class Application1a extends ComponentDefinition {
     /**
      * Instantiates a new application0.
      */
-    public Application1a() {
+    public Application1b() {
         subscribe(handleInit, control);
         subscribe(handleStart, control);
         subscribe(handleContinue, timer);
         subscribe(handleConsoleInput, con);
-        subscribe(handleCrash, pfd);
+        subscribe(handleRestore, epfd);
+        subscribe(handleSuspected, epfd);
         //subscribe(handleHeartBeat, pp2p);
         
     }
-    Handler<Application1aInit> handleInit = new Handler<Application1aInit>() {
-        public void handle(Application1aInit event) {
+    Handler<Application1bInit> handleInit = new Handler<Application1bInit>() {
+        public void handle(Application1bInit event) {
             neighborSet = event.getNeighborSet();
             self = event.getSelf();
             commands = new ArrayList<String>(Arrays.asList(event.getCommandScript().split(":")));
@@ -86,20 +87,24 @@ public class Application1a extends ComponentDefinition {
             doNextCommand();
         }
     };
-    Handler<Pp2pMessage> handlePp2pMessage = new Handler<Pp2pMessage>() {
-        public void handle(Pp2pMessage event) {
-            logger.info("Received perfect message {}", event.getMessage());
-        }
-    };
-    Handler<Flp2pMessage> handleFlp2pMessage = new Handler<Flp2pMessage>() {
-        public void handle(Flp2pMessage event) {
-            logger.info("Received lossy message {}", event.getMessage());
-        }
-    };
-    Handler<Crash> handleCrash = new Handler<Crash>() {
+
+    Handler<Suspect> handleSuspected = new Handler<Suspect>() {
+
         @Override
-        public void handle(Crash e) {
-            logger.info("Received a crash information on process {}", e.getWhoCrashed());
+        public void handle(Suspect e) {
+            logger.info("Suspected node {} to have crashed. Period => {} ms", 
+                        e.getSuspectedProcess(),
+                        e.getPeriod());
+        }
+    };
+    
+    Handler<Restore> handleRestore = new Handler<Restore>() {
+
+        @Override
+        public void handle(Restore e) {
+            logger.info("Restored node {}. Period => {} ms", 
+                    e.getRestoredProcess(),
+                    e.getPeriod());
         }
     };
     
@@ -149,4 +154,5 @@ public class Application1a extends ComponentDefinition {
         Kompics.shutdown();
         blocking = true;
     }
+    
 }

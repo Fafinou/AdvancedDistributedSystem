@@ -30,7 +30,7 @@ import se.sics.kompics.launch.Topology;
  * @version $Id: Assignment0Executor.java 516 2009-01-28 04:00:47Z cosmin $
  */
 @SuppressWarnings("serial")
-public final class Assignment1aExecutor {
+public final class Assignment1abExecutor {
 
     /**
      * The main method.
@@ -84,7 +84,16 @@ public final class Assignment1aExecutor {
             }
         };
 
-        scenario1.executeOn(topology1);
+        Scenario scenarioEpfd = new Scenario(Assignment1bMain.class) {
+            {
+                command(1, "S500:S2000:X");
+                command(2, "S500");
+                command(3, "S2500");
+            }
+        };
+
+        //scenario1.executeOn(topology1);
+        scenarioEpfd.executeOn(topology1);
         //scenario1.executeOn(topology2);
         // scenario2.executeOn(topology1);
         // scenario2.executeOn(topology2);

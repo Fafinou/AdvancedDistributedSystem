@@ -45,7 +45,7 @@ public final class Assignment1abExecutor {
                 node(2, "127.0.0.1", 22032);
                 node(3, "127.0.0.1", 22033);
                 node(4, "127.0.0.1", 22034);
-
+                node(5, "127.0.0.1", 22035);
                 link(1, 2, 3000, 0).bidirectional();
                 link(2, 3, 3000, 0);
                 // link(2, 1, 3000, 0.5);
@@ -67,11 +67,13 @@ public final class Assignment1abExecutor {
         };
 
 
-        Scenario scenario1 = new Scenario(Assignment1aMain.class) {
+        Scenario scenarioPfd = new Scenario(Assignment1aMain.class) {
             {
                 command(1, "S500:S2000:X");
-                command(2, "S500");
-                command(3, "S2500");
+                command(2, "S500:S4000:S5000:X");
+                command(3, "S2500:X");
+                command(4, "X");
+                command(5,"S60000:X");
             }
         };
 
@@ -87,13 +89,16 @@ public final class Assignment1abExecutor {
         Scenario scenarioEpfd = new Scenario(Assignment1bMain.class) {
             {
                 command(1, "S500:S2000:X");
-                command(2, "S500");
-                command(3, "S2500");
+                command(2, "S500:S4000:S5000:X");
+                command(3, "S2500:X");
+                command(4, "X");
+                command(5,"S60000:X");
             }
         };
 
-        //scenario1.executeOn(topology1);
-        scenarioEpfd.executeOn(topology1);
+        scenarioPfd.executeOn(topology2);
+        //scenarioEpfd.executeOn(topology1);
+        
         //scenario1.executeOn(topology2);
         // scenario2.executeOn(topology1);
         // scenario2.executeOn(topology2);
@@ -106,13 +111,5 @@ public final class Assignment1abExecutor {
         // move one of the below scenario executions above the exit for
         // execution
 
-        scenario1.executeOn(topology1);
-        scenario1.executeOn(topology2);
-        scenario2.executeOn(topology1);
-        scenario2.executeOn(topology2);
-        scenario1.executeOnFullyConnected(topology1);
-        scenario1.executeOnFullyConnected(topology2);
-        scenario2.executeOnFullyConnected(topology1);
-        scenario2.executeOnFullyConnected(topology2);
     }
 }

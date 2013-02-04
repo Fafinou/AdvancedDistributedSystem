@@ -68,7 +68,7 @@ public class Assignment1bMain extends ComponentDefinition{
         Component time = create(JavaTimer.class);
         Component network = create(MinaNetwork.class);
         Component con = create(JavaConsole.class);
-        Component flp2p = create(DelayDropLink.class);
+        Component pp2p = create(DelayLink.class);
         Component app = create(Application1b.class);
         Component epfd = create(EPFD.class);
 
@@ -76,7 +76,7 @@ public class Assignment1bMain extends ComponentDefinition{
         subscribe(handleFault, time.control());
         subscribe(handleFault, network.control());
         subscribe(handleFault, con.control());
-        subscribe(handleFault, flp2p.control());
+        subscribe(handleFault, pp2p.control());
         subscribe(handleFault, app.control());
         subscribe(handleFault, epfd.control());
 
@@ -85,17 +85,17 @@ public class Assignment1bMain extends ComponentDefinition{
         Set<Address> neighborSet = topology.getNeighbors(self);
 
         trigger(new MinaNetworkInit(self, 5), network.control());
-        trigger(new DelayDropLinkInit(topology, 42), flp2p.control());
+        trigger(new DelayLinkInit(topology), pp2p.control());
         trigger(new Application1bInit(commandScript, neighborSet, self), app
                 .control());
-        trigger(new EPFDinit(topology, 100, 100),
+        trigger(new EPFDinit(topology, 1000, 1000),
                 epfd.control());
 
         // connect the components
 
 
-        connect(epfd.required(FairLossPointToPointLink.class),
-                flp2p.provided(FairLossPointToPointLink.class));
+        connect(epfd.required(PerfectPointToPointLink.class),
+                pp2p.provided(PerfectPointToPointLink.class));
         connect(epfd.required(Timer.class), time.provided(Timer.class));
 
 
@@ -105,8 +105,8 @@ public class Assignment1bMain extends ComponentDefinition{
         connect(app.required(Timer.class), time.provided(Timer.class));
         connect(app.required(EventuallyPerfectFailureDetector.class),
                 epfd.provided(EventuallyPerfectFailureDetector.class));
-        connect(flp2p.required(Timer.class), time.provided(Timer.class));
-        connect(flp2p.required(Network.class), network.provided(Network.class));
+        connect(pp2p.required(Timer.class), time.provided(Timer.class));
+        connect(pp2p.required(Network.class), network.provided(Network.class));
 
 
     }

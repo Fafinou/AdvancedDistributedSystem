@@ -82,7 +82,7 @@ public class PFD extends ComponentDefinition {
             logger.info("starting pfd");
             self = event.getTopology().getSelfAddress();
             allNodes = event.getTopology().getNeighbors(self);
-            alive = new HashSet<Address>();
+            alive = new HashSet<Address>(allNodes);
             detected = new HashSet<Address>();
             gamma = event.getGamma();
             delta = event.getDelta();

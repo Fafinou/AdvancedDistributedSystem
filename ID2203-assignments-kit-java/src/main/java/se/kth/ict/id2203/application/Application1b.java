@@ -119,6 +119,8 @@ public class Application1b extends ComponentDefinition {
             doSleep(Integer.parseInt(cmd.substring(1)));
         } else if (cmd.startsWith("X")) {
             doShutdown();
+        } else if (cmd.startsWith("R")){
+            doRecovery();
         } else if (cmd.equals("help")) {
             doHelp();
         } else if (cmd.equals("$DONE")) {
@@ -153,6 +155,10 @@ public class Application1b extends ComponentDefinition {
         System.err.close();
         Kompics.shutdown();
         blocking = true;
+    }
+
+    private void doRecovery() {
+        logger.info("Node {} recovered from crash",self);
     }
     
 }

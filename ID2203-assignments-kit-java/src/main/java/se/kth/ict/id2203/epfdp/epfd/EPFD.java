@@ -35,7 +35,7 @@ import se.sics.kompics.timer.Timer;
 public class EPFD extends ComponentDefinition {
 
     Negative<EventuallyPerfectFailureDetector> epfd = provides(EventuallyPerfectFailureDetector.class);
-    Positive<FairLossPointToPointLink> flp2p = requires(FairLossPointToPointLink.class);
+    Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
     Positive<Timer> timer = requires(Timer.class);
     private static final Logger logger =
             LoggerFactory.getLogger(Application1a.class);
@@ -49,7 +49,7 @@ public class EPFD extends ComponentDefinition {
         /*subscribe(eachHandler, respective port);*/
         subscribe(handleInit, control);
         subscribe(handleHeartBeatTimeOut, timer);
-        subscribe(handleHeartBeatMessage, flp2p);
+        subscribe(handleHeartBeatMessage, pp2p);
         subscribe(handleCheckTimeOut, timer);
     }
     private Address self;
@@ -114,15 +114,15 @@ public class EPFD extends ComponentDefinition {
                 
                 Address address = it.next();
                 //logger.info("send an heartbeat to {}", address);
-                trigger(new Flp2pSend(address, new HeartBeatMessagesFl(self)), flp2p);
+                trigger(new Pp2pSend(address, new HeartBeatMessage(self)), pp2p);
             }
 
             startTimer(timeDelay, TypeTimeOut.HEARTBEAT);
         }
     };
-    Handler<HeartBeatMessagesFl> handleHeartBeatMessage = new Handler<HeartBeatMessagesFl>() {
+    Handler<HeartBeatMessage> handleHeartBeatMessage = new Handler<HeartBeatMessage>() {
         @Override
-        public void handle(HeartBeatMessagesFl e) {
+        public void handle(HeartBeatMessage e) {
             //logger.info("received an answer from {}",e.getSource());
             alive.add(e.getSource());
         }

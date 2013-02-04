@@ -46,12 +46,10 @@ public final class Assignment1abExecutor {
                 node(3, "127.0.0.1", 22033);
                 node(4, "127.0.0.1", 22034);
                 node(5, "127.0.0.1", 22035);
-                //link(1, 2, 3000, 0).bidirectional();
-                //link(2, 3, 3000, 0);
-                // link(2, 1, 3000, 0.5);
-                // link(3, 2, 3000, 0.5);
-                // link(4, 2, 3000, 0.5);
-                defaultLinks(1000, 0);
+                link(1, 2, 800, 0).bidirectional();
+                link(2, 3, 250, 0);
+                link(4, 2, 1500, 0.5);
+                defaultLinks(500, 0);
             }
         };
 
@@ -88,11 +86,11 @@ public final class Assignment1abExecutor {
 
         Scenario scenarioEpfd = new Scenario(Assignment1bMain.class) {
             {
-                command(1, "S500:S2000:X");
-                command(2, "S500:S4000:S5000:X");
-                command(3, "S2500:X");
-                command(4, "X");
-                command(5,"S60000:X");
+                command(1, "S40000:X");
+                command(2, "S18000:X");
+                command(3, "S10000:X");
+                command(4, "S4000:X");
+                command(5,"S120000:X");
             }
         };
 

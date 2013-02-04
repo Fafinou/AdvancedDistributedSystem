@@ -13,6 +13,8 @@ import se.kth.ict.id2203.application.Application1a;
 import se.kth.ict.id2203.epfdp.EventuallyPerfectFailureDetector;
 import se.kth.ict.id2203.epfdp.Restore;
 import se.kth.ict.id2203.epfdp.Suspect;
+import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
+import se.kth.ict.id2203.flp2p.Flp2pSend;
 import se.kth.ict.id2203.pfdp.pfd.CheckTimeOut;
 import se.kth.ict.id2203.pfdp.pfd.HeartBeatMessage;
 import se.kth.ict.id2203.pfdp.pfd.HeartBeatTimeOut;
@@ -33,7 +35,7 @@ import se.sics.kompics.timer.Timer;
 public class EPFD extends ComponentDefinition {
 
     Negative<EventuallyPerfectFailureDetector> epfd = provides(EventuallyPerfectFailureDetector.class);
-    Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
+    Positive<FairLossPointToPointLink> flp2p = requires(FairLossPointToPointLink.class);
     Positive<Timer> timer = requires(Timer.class);
     private static final Logger logger =
             LoggerFactory.getLogger(Application1a.class);
@@ -47,7 +49,7 @@ public class EPFD extends ComponentDefinition {
         /*subscribe(eachHandler, respective port);*/
         subscribe(handleInit, control);
         subscribe(handleHeartBeatTimeOut, timer);
-        subscribe(handleHeartBeatMessage, pp2p);
+        subscribe(handleHeartBeatMessage, flp2p);
         subscribe(handleCheckTimeOut, timer);
     }
     private Address self;
@@ -112,15 +114,15 @@ public class EPFD extends ComponentDefinition {
                 
                 Address address = it.next();
                 //logger.info("send an heartbeat to {}", address);
-                trigger(new Pp2pSend(address, new HeartBeatMessage(self)), pp2p);
+                trigger(new Flp2pSend(address, new HeartBeatMessagesFl(self)), flp2p);
             }
 
             startTimer(timeDelay, TypeTimeOut.HEARTBEAT);
         }
     };
-    Handler<HeartBeatMessage> handleHeartBeatMessage = new Handler<HeartBeatMessage>() {
+    Handler<HeartBeatMessagesFl> handleHeartBeatMessage = new Handler<HeartBeatMessagesFl>() {
         @Override
-        public void handle(HeartBeatMessage e) {
+        public void handle(HeartBeatMessagesFl e) {
             //logger.info("received an answer from {}",e.getSource());
             alive.add(e.getSource());
         }

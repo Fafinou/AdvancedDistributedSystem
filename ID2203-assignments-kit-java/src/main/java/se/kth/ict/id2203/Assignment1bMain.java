@@ -15,6 +15,9 @@ import se.kth.ict.id2203.console.java.JavaConsole;
 import se.kth.ict.id2203.epfdp.EventuallyPerfectFailureDetector;
 import se.kth.ict.id2203.epfdp.epfd.EPFD;
 import se.kth.ict.id2203.epfdp.epfd.EPFDinit;
+import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
+import se.kth.ict.id2203.flp2p.delay.DelayDropLink;
+import se.kth.ict.id2203.flp2p.delay.DelayDropLinkInit;
 import se.kth.ict.id2203.pfdp.pfd.PFD;
 import se.kth.ict.id2203.pfdp.pfd.PfdInit;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
@@ -65,7 +68,7 @@ public class Assignment1bMain extends ComponentDefinition{
         Component time = create(JavaTimer.class);
         Component network = create(MinaNetwork.class);
         Component con = create(JavaConsole.class);
-        Component pp2p = create(DelayLink.class);
+        Component flp2p = create(DelayDropLink.class);
         Component app = create(Application1b.class);
         Component epfd = create(EPFD.class);
 
@@ -73,7 +76,7 @@ public class Assignment1bMain extends ComponentDefinition{
         subscribe(handleFault, time.control());
         subscribe(handleFault, network.control());
         subscribe(handleFault, con.control());
-        subscribe(handleFault, pp2p.control());
+        subscribe(handleFault, flp2p.control());
         subscribe(handleFault, app.control());
         subscribe(handleFault, epfd.control());
 
@@ -82,17 +85,17 @@ public class Assignment1bMain extends ComponentDefinition{
         Set<Address> neighborSet = topology.getNeighbors(self);
 
         trigger(new MinaNetworkInit(self, 5), network.control());
-        trigger(new DelayLinkInit(topology), pp2p.control());
+        trigger(new DelayDropLinkInit(topology, 42), flp2p.control());
         trigger(new Application1bInit(commandScript, neighborSet, self), app
                 .control());
-        trigger(new EPFDinit(topology, 100, 100),
+        trigger(new EPFDinit(topology, 500, 50),
                 epfd.control());
 
         // connect the components
 
 
-        connect(epfd.required(PerfectPointToPointLink.class),
-                pp2p.provided(PerfectPointToPointLink.class));
+        connect(epfd.required(FairLossPointToPointLink.class),
+                flp2p.provided(FairLossPointToPointLink.class));
         connect(epfd.required(Timer.class), time.provided(Timer.class));
 
 
@@ -102,8 +105,8 @@ public class Assignment1bMain extends ComponentDefinition{
         connect(app.required(Timer.class), time.provided(Timer.class));
         connect(app.required(EventuallyPerfectFailureDetector.class),
                 epfd.provided(EventuallyPerfectFailureDetector.class));
-        connect(pp2p.required(Timer.class), time.provided(Timer.class));
-        connect(pp2p.required(Network.class), network.provided(Network.class));
+        connect(flp2p.required(Timer.class), time.provided(Timer.class));
+        connect(flp2p.required(Network.class), network.provided(Network.class));
 
 
     }

@@ -46,8 +46,8 @@ public final class Assignment1abExecutor {
                 node(3, "127.0.0.1", 22033);
                 node(4, "127.0.0.1", 22034);
                 node(5, "127.0.0.1", 22035);
-                link(1, 2, 3000, 0).bidirectional();
-                link(2, 3, 3000, 0);
+                //link(1, 2, 3000, 0).bidirectional();
+                //link(2, 3, 3000, 0);
                 // link(2, 1, 3000, 0.5);
                 // link(3, 2, 3000, 0.5);
                 // link(4, 2, 3000, 0.5);
@@ -96,8 +96,8 @@ public final class Assignment1abExecutor {
             }
         };
 
-        scenarioPfd.executeOn(topology2);
-        //scenarioEpfd.executeOn(topology1);
+        //scenarioPfd.executeOn(topology2);
+        scenarioEpfd.executeOn(topology2);
         
         //scenario1.executeOn(topology2);
         // scenario2.executeOn(topology1);

@@ -31,6 +31,7 @@ import se.kth.ict.id2203.console.Console;
 import se.kth.ict.id2203.console.ConsoleLine;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.Flp2pSend;
+import se.kth.ict.id2203.pfdp.PerfectFailureDetector;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.Pp2pSend;
 import se.sics.kompics.ComponentDefinition;
@@ -54,6 +55,7 @@ public final class Application0 extends ComponentDefinition {
 	Positive<Console> con = requires(Console.class);
 	Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
 	Positive<FairLossPointToPointLink> flp2p = requires(FairLossPointToPointLink.class);
+        Positive<PerfectFailureDetector> pfd = requires(PerfectFailureDetector.class);
 
 	private static final Logger logger =
 			LoggerFactory.getLogger(Application0.class);
@@ -80,7 +82,6 @@ public final class Application0 extends ComponentDefinition {
 		public void handle(Application0Init event) {
 			neighborSet = event.getNeighborSet();
 			self = event.getSelf();
-
 			commands = new ArrayList<String>(Arrays.asList(event.getCommandScript().split(":")));
             commands.add("$DONE");
 	        blocking = false;

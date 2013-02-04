@@ -65,7 +65,7 @@ public final class Assignment0Executor {
 
 		Scenario scenario1 = new Scenario(Assignment0Group0Main.class) {
 			{
-				command(1, "S500:Labc");
+				command(1, "S500");
 				command(2, "S500:Pdef");
 			}
 		};
@@ -79,7 +79,7 @@ public final class Assignment0Executor {
 			}
 		};
 
-		scenario1.executeOn(topology1);
+		scenario1.executeOn(topology2);
 		// scenario1.executeOn(topology2);
 		// scenario2.executeOn(topology1);
 		// scenario2.executeOn(topology2);

@@ -4,3 +4,4 @@
 *.jar
 *.war
 *.ear
+/ID2203-assignments-kit-java/target/

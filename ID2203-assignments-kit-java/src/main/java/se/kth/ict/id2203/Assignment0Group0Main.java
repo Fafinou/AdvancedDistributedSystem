@@ -30,6 +30,8 @@ import se.kth.ict.id2203.console.java.JavaConsole;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.delay.DelayDropLink;
 import se.kth.ict.id2203.flp2p.delay.DelayDropLinkInit;
+import se.kth.ict.id2203.pfdp.pfd.PFD;
+import se.kth.ict.id2203.pfdp.pfd.PfdInit;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLinkInit;
@@ -84,6 +86,7 @@ public class Assignment0Group0Main extends ComponentDefinition {
 		Component pp2p = create(DelayLink.class);
 		Component flp2p = create(DelayDropLink.class);
 		Component app = create(Application0.class);
+                //Component pfd = create(PFD.class);
 
 		// handle possible faults in the components
 		subscribe(handleFault, time.control());
@@ -100,8 +103,10 @@ public class Assignment0Group0Main extends ComponentDefinition {
 		trigger(new MinaNetworkInit(self, 5), network.control());
 		trigger(new DelayLinkInit(topology), pp2p.control());
 		trigger(new DelayDropLinkInit(topology, 0), flp2p.control());
-		trigger(new Application0Init(commandScript, neighborSet, self), app
-				.control());
+		trigger(new Application0Init(commandScript, neighborSet, self), 
+                            app.control());
+                //trigger(new PfdInit(topology, 1000, 3001, self),
+                //pfd.control());
 
 		// connect the components
 		connect(app.required(Console.class),

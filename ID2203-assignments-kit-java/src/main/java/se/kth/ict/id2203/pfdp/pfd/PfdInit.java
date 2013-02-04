@@ -17,17 +17,17 @@ public class PfdInit extends Init {
     private final Topology topology;
     private final int gamma;
     private final int delta;
-    private final Address self;
+
 
     /**
      *
      * @param topology
      */
-    public PfdInit(Topology topology, int gamma, int delta, Address self) {
+    public PfdInit(Topology topology, int gamma, int delta) {
         this.topology = topology;
         this.gamma = gamma;
         this.delta = delta;
-        this.self = self;
+
     }
 
     public int getGamma() {
@@ -38,11 +38,6 @@ public class PfdInit extends Init {
         return delta;
     }
 
-    public Address getSelf() {
-        return self;
-    }
-
-    
     public final Topology getTopology() {
         return topology;
     }

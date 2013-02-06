@@ -89,7 +89,7 @@ public class Assignment1aMain extends ComponentDefinition {
         trigger(new DelayLinkInit(topology), pp2p.control());
         trigger(new Application1aInit(commandScript, neighborSet, self), app
                 .control());
-        trigger(new PfdInit(topology, 1000, 3100),
+        trigger(new PfdInit(topology, 1000, 1001),
                 pfd.control());
 
         // connect the components

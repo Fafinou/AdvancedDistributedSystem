@@ -41,13 +41,11 @@ public final class Assignment1abExecutor {
 
         Topology topology2 = new Topology() {
             {
-                node(1, "127.0.0.1", 22036);
-                node(2, "127.0.0.1", 22037);
-                node(3, "127.0.0.1", 22038);
-                node(4, "127.0.0.1", 22039);
-                node(5, "127.0.0.1", 22040);
-                link(1, 2, 3000, 0).bidirectional();
-                link(2, 3, 3000, 0);
+                node(1, "127.0.0.1", 22030);
+                node(2, "127.0.0.1", 22031);
+                node(3, "127.0.0.1", 22032);
+                node(4, "127.0.0.1", 22033);
+                node(5, "127.0.0.1", 22034);
                 //link(4, 2, 1500, 0.5);
                 defaultLinks(1000, 0);
             }
@@ -65,13 +63,13 @@ public final class Assignment1abExecutor {
         };
 
 
-        Scenario scenarioPfd = new Scenario(Assignment1bMain.class) {
+        Scenario scenarioPfd = new Scenario(Assignment1aMain.class) {
             {
                 command(1, "S500:S2000:X");
                 command(2, "S500:S4000:S5000:X");
                 command(3, "S2500:X");
                 command(4, "X");
-                command(5,"S60000:X");
+                command(5,"S60000");
             }
         };
 

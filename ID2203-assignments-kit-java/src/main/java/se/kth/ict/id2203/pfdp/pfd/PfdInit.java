@@ -9,14 +9,14 @@ import se.sics.kompics.address.Address;
 import se.sics.kompics.launch.Topology;
 
 /**
- *
- * @author fingolfin
+ * 
+ * @author Alex, Simon
  */
 public class PfdInit extends Init {
 
     private final Topology topology;
     private final int gamma;
-    private final int delta;
+    private final int delta; 
 
 
     /**
@@ -30,6 +30,7 @@ public class PfdInit extends Init {
 
     }
 
+    
     public int getGamma() {
         return gamma;
     }

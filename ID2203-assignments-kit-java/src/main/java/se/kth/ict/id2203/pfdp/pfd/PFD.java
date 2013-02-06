@@ -54,6 +54,11 @@ public class PFD extends ComponentDefinition {
     private int gamma = 0;
     private int delta = 0;
 
+    /**
+     * Start a timer of a given type
+     * @param time duration of the timer in ms
+     * @param type type of the time out event (HeartBeat time out or Check timeout)
+     */
     private void startTimer(int time, TypeTimeOut type) {
         //0 = heart beat else check
         ScheduleTimeout st;

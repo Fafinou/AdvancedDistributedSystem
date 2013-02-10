@@ -15,8 +15,9 @@ public class EPFDinit extends Init {
     private final Topology topology;
     private final int timeDelay;
     private final int periodIncreaser;
+    private boolean fairLoss;
 
-    public EPFDinit(Topology topology, int timeDelay, int periodIncreaser) {
+    public EPFDinit(Topology topology, int timeDelay, int periodIncreaser, boolean fairLoss) {
         this.topology = topology;
         this.timeDelay = timeDelay;
         this.periodIncreaser = periodIncreaser;
@@ -32,6 +33,10 @@ public class EPFDinit extends Init {
 
     public int getPeriodIncreaser() {
         return periodIncreaser;
+    }
+
+    boolean getFairLoss() {
+        return fairLoss;
     }
     
     

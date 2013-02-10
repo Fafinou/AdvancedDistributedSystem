@@ -36,6 +36,7 @@ public class EPFD extends ComponentDefinition {
 
     Negative<EventuallyPerfectFailureDetector> epfd = provides(EventuallyPerfectFailureDetector.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
+    Positive<FairLossPointToPointLink> flp2p = requires(FairLossPointToPointLink.class);
     Positive<Timer> timer = requires(Timer.class);
     private static final Logger logger =
             LoggerFactory.getLogger(Application1a.class);
@@ -50,6 +51,7 @@ public class EPFD extends ComponentDefinition {
         subscribe(handleInit, control);
         subscribe(handleHeartBeatTimeOut, timer);
         subscribe(handleHeartBeatMessage, pp2p);
+        subscribe(handleHeartBeatMessageFl, flp2p);
         subscribe(handleCheckTimeOut, timer);
     }
     private Address self;
@@ -59,6 +61,7 @@ public class EPFD extends ComponentDefinition {
     private int period = 0;
     private int timeDelay = 0;
     private int periodIncreaser = 0;
+    private boolean fairLoss = false;
 
     private void startTimer(int time, TypeTimeOut type) {
         //0 = heart beat else check
@@ -79,16 +82,14 @@ public class EPFD extends ComponentDefinition {
                 break;
         }
     }
-    
-    private boolean intersectionIsEmpty(Set<Address> s1, Set<Address> s2){
+
+    private boolean intersectionIsEmpty(Set<Address> s1, Set<Address> s2) {
         Set<Address> intersection = new HashSet<Address>(s1);
         intersection.retainAll(s2);
         return intersection.isEmpty();
     }
-    
     /*Handlers*/
     Handler<EPFDinit> handleInit = new Handler<EPFDinit>() {
-
         @Override
         public void handle(EPFDinit e) {
             logger.info("init of epfd");
@@ -99,11 +100,12 @@ public class EPFD extends ComponentDefinition {
             allNodes = e.getTopology().getNeighbors(self);
             alive = new HashSet<Address>(allNodes);
             suspected = new HashSet<Address>();
-            
+            fairLoss = e.getFairLoss();
+
             /*start timers*/
             startTimer(timeDelay, TypeTimeOut.HEARTBEAT);
             startTimer(period, TypeTimeOut.CHECK);
-            
+
         }
     };
     Handler<HeartBeatTimeOut> handleHeartBeatTimeOut = new Handler<HeartBeatTimeOut>() {
@@ -111,10 +113,14 @@ public class EPFD extends ComponentDefinition {
         public void handle(HeartBeatTimeOut e) {
             /*iterate over all correct adresses and send an Heartbeat*/
             for (Iterator<Address> it = allNodes.iterator(); it.hasNext();) {
-                
+
                 Address address = it.next();
                 //logger.info("send an heartbeat to {}", address);
-                trigger(new Pp2pSend(address, new HeartBeatMessage(self)), pp2p);
+                if (fairLoss){
+                    trigger(new Flp2pSend(address, new HeartBeatMessagesFl(self)),flp2p);
+                } else {
+                    trigger(new Pp2pSend(address, new HeartBeatMessage(self)), pp2p);
+                }
             }
 
             startTimer(timeDelay, TypeTimeOut.HEARTBEAT);
@@ -128,11 +134,18 @@ public class EPFD extends ComponentDefinition {
         }
     };
     
+        Handler<HeartBeatMessagesFl> handleHeartBeatMessageFl = new Handler<HeartBeatMessagesFl>() {
+        @Override
+        public void handle(HeartBeatMessagesFl e) {
+            //logger.info("received an answer from {}",e.getSource());
+            alive.add(e.getSource());
+        }
+    };
     
     Handler<CheckTimeOut> handleCheckTimeOut = new Handler<CheckTimeOut>() {
         @Override
         public void handle(CheckTimeOut e) {
-            if(!intersectionIsEmpty(alive, suspected)){
+            if (!intersectionIsEmpty(alive, suspected)) {
                 period = period + periodIncreaser;
             }
             Iterator<Address> iterNodes = allNodes.iterator();
@@ -141,7 +154,7 @@ public class EPFD extends ComponentDefinition {
                 if ((!alive.contains(address)) && (!suspected.contains(address))) {
                     suspected.add(address);
                     trigger(new Suspect(address, period), epfd);
-                }else if((alive.contains(address)) && (suspected.contains(address))){
+                } else if ((alive.contains(address)) && (suspected.contains(address))) {
                     suspected.remove(address);
                     trigger(new Restore(address, period), epfd);
                 }

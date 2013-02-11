@@ -1,13 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package se.kth.ict.id2203.lpbport;
+
+import se.sics.kompics.Event;
 
 /**
  *
  * @author fingolfin
  */
-public class PbDeliver {
+public class PbDeliver extends Event {
     
 }

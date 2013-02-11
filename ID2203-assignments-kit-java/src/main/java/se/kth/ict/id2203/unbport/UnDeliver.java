@@ -4,6 +4,7 @@
  */
 package se.kth.ict.id2203.unbport;
 
+import se.kth.ict.id2203.unbport.unb.DataMessage;
 import se.sics.kompics.Event;
 import se.sics.kompics.address.Address;
 
@@ -12,15 +13,18 @@ import se.sics.kompics.address.Address;
  * @author fingolfin
  */
 public class UnDeliver extends Event{
-    Address source;
 
-    public UnDeliver(Address source) {
-        this.source = source;
+    private DataMessage msg;
+    public UnDeliver(DataMessage msg) {
+        this.msg = msg;
     }
 
-    public Address getSource() {
-        return source;
+    public DataMessage getMsg() {
+        return msg;
     }
+    
+    
+
     
     
 }

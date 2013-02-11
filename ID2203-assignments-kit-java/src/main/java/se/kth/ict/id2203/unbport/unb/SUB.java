@@ -59,11 +59,11 @@ public class SUB extends ComponentDefinition{
         }
     };
     
-    Handler<Flp2pDeliver> handleFlp2pDeliver = new Handler<Flp2pDeliver>() {
+    Handler<DataMessage> handleFlp2pDeliver = new Handler<DataMessage>() {
 
         @Override
-        public void handle(Flp2pDeliver e) {
-            trigger(new UnDeliver(e.getSource()), ubp);
+        public void handle(DataMessage e) {
+            trigger(new UnDeliver(e), ubp);
         }
     };
     

@@ -5,19 +5,34 @@
 package se.kth.ict.id2203.lpbport.lpb;
 
 import com.sun.xml.internal.ws.api.pipe.NextAction;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.Flp2pDeliver;
+import se.kth.ict.id2203.flp2p.Flp2pSend;
 import se.kth.ict.id2203.lpbport.PbBroadcast;
+import se.kth.ict.id2203.lpbport.PbDeliver;
 import se.kth.ict.id2203.lpbport.ProbabilisticBroadcast;
 import se.kth.ict.id2203.pfdp.pfd.CheckTimeOut;
+import se.kth.ict.id2203.pfdp.pfd.HeartBeatTimeOut;
 import se.kth.ict.id2203.unbport.UnDeliver;
 import se.kth.ict.id2203.unbport.UnreliableBroadcast;
+import se.kth.ict.id2203.unbport.unb.DataMessage;
+import se.kth.ict.id2203.unbport.unb.RequestMessage;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
 import se.sics.kompics.Positive;
 import se.sics.kompics.address.Address;
+import se.sics.kompics.launch.Topology;
+import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
 
 /**
@@ -38,50 +53,171 @@ public class LazyPb extends ComponentDefinition {
         subscribe(handleUnDeliver, ub);
         subscribe(handleFllRequestDeliver, flp2p);
         subscribe(handleFllDataDeliver, flp2p);
-        subscribe(handleCheckTimeOut, timer);
+        subscribe(handleLpbTimeOut, timer);
 
     }
-    private int[] next = null;
+
+    private HashMap<Address, Integer> initNext(Set<Address> allAdd) {
+        HashMap<Address, Integer> toReturn = new HashMap<Address, Integer>();
+        Iterator<Address> iter = allAdd.iterator();
+        while (iter.hasNext()) {
+            Address address = iter.next();
+            toReturn.put(address, 1);
+        }
+        return toReturn;
+    }
+    private HashMap<Address, Integer> next = null;
     private int lsn = 0;
-    private Set<Address> pending = null;
-    private Set<Address> stored = null;
+    private Address self;
+    private ArrayList<DataMessage> pending = null;
+    private ArrayList<DataMessage> stored = null;
+    private ArrayList<Address> allNodes;
+    private int fanOut = 0;
+    private Random randomGen = null;
+    private double alpha = 0;
+    private int R = 0;
+    private int delay;
+
+    private void gossip(RequestMessage msg) {
+        Collections.shuffle(allNodes);
+        Iterator<Address> iter = allNodes.iterator();
+        int i = 0;
+        while (iter.hasNext() && i < fanOut) {
+            i++;
+            trigger(new Flp2pSend(iter.next(), msg), pb);
+        }
+    }
+
+    private void startTimer(int delay, Address source, int sequenceNumber) {
+        ScheduleTimeout st;
+        st = new ScheduleTimeout(delay);
+        st.setTimeoutEvent(new LpbTimeOut(st, source, sequenceNumber));
+        trigger(st, this.timer);
+    }
+
+    private boolean existMessageSequenceNumber(ArrayList<DataMessage> pending, int sequenceNumber) {
+        Iterator<DataMessage> iter = pending.iterator();
+        while (iter.hasNext()) {
+            DataMessage dataMessage = iter.next();
+            if (dataMessage.getSequenceNumber() == sequenceNumber) {
+                return true;
+            }
+        }
+        return false;
+    }
     
-    
+
+    private DataMessage searchMessage(ArrayList<DataMessage> stored,
+            Address source, int seqNbr) {
+        Iterator<DataMessage> iter = stored.iterator();
+        while (iter.hasNext()) {
+            DataMessage dataMessage = iter.next();
+            if (dataMessage.getSequenceNumber() == seqNbr
+                    && dataMessage.getSource() == source) {
+                return dataMessage;
+            }
+        }
+        return null;
+    }
     /*Handlers*/
     Handler<LazyPbInit> handleInit = new Handler<LazyPbInit>() {
         @Override
         public void handle(LazyPbInit e) {
-            //TODO
+            next = initNext(e.getTopology().getAllAddresses());
+            lsn = 0;
+            pending = new ArrayList<DataMessage>();
+            stored = new ArrayList<DataMessage>();
+            self = e.getTopology().getSelfAddress();
+            allNodes = new ArrayList<Address>(e.getTopology().getNeighbors(self));
+            fanOut = e.getFanOut();
+
+            /*init the random generator*/
+            randomGen = new Random();
+            /*init alpha*/
+            alpha = e.getAlpha();
+            R = e.getR();
+            delay = e.getDelay();
+
+            /*Start the time out of pending lists check*/
+            ScheduleTimeout st = new ScheduleTimeout(1000);
+            st.setTimeoutEvent(new CheckPendingTimeOut(st));
+            trigger(st, timer);
+
         }
     };
     Handler<PbBroadcast> handlePbBroadcast = new Handler<PbBroadcast>() {
         @Override
         public void handle(PbBroadcast e) {
-            //TODO
+            lsn++;
+            trigger(new DataMessage(self, lsn), ub);
         }
     };
     Handler<UnDeliver> handleUnDeliver = new Handler<UnDeliver>() {
         @Override
         public void handle(UnDeliver e) {
-            //TODO
+            DataMessage tmpMsg = e.getMsg();
+            if (Math.random() > alpha) {
+                stored.add(tmpMsg);
+            } else if (e.getMsg().getSequenceNumber()
+                    == next.get(tmpMsg.getSource())) {
+                int newNext = next.get(tmpMsg.getSource());
+                newNext++;
+                next.put(tmpMsg.getSource(), newNext);
+
+                /*deliver*/
+                trigger(new PbDeliver(tmpMsg.getSource()), pb);
+
+            } else if (tmpMsg.getSequenceNumber()
+                    > next.get(tmpMsg.getSource())) {
+                pending.add(tmpMsg);
+                for (int i = next.get(tmpMsg.getSource());
+                        i < (tmpMsg.getSequenceNumber() - 1);
+                        i++) {
+                    if (!existMessageSequenceNumber(pending, i)) {
+                        gossip(new RequestMessage(self, tmpMsg.getSource(), i, R - 1));
+                    }
+                }
+                startTimer(delay, tmpMsg.getSource(), tmpMsg.getSequenceNumber());
+            }
         }
     };
-    Handler<Flp2pDeliver> handleFllRequestDeliver = new Handler<Flp2pDeliver>() {
+    Handler<RequestMessage> handleFllRequestDeliver = new Handler<RequestMessage>() {
         @Override
-        public void handle(Flp2pDeliver e) {
-            //TODO
+        public void handle(RequestMessage e) {
+            DataMessage toReply = searchMessage(stored,
+                    e.getRequestedSource(),
+                    e.getSequenceNumber());
+            if (toReply != null) {
+                trigger(new Flp2pSend(e.getSource(), toReply), flp2p);
+            } else if (e.getTTL() > 0) {
+                gossip(new RequestMessage(e.getSource(), e.getRequestedSource(),
+                        e.getSequenceNumber(), e.getTTL() - 1));
+            }
         }
     };
-    Handler<Flp2pDeliver> handleFllDataDeliver = new Handler<Flp2pDeliver>() {
+    Handler<DataMessage> handleFllDataDeliver = new Handler<DataMessage>() {
         @Override
-        public void handle(Flp2pDeliver e) {
-            //TODO
+        public void handle(DataMessage e) {
+            pending.add(e);
         }
     };
-    Handler<CheckTimeOut> handleCheckTimeOut = new Handler<CheckTimeOut>() {
+    Handler<CheckPendingTimeOut> handleCheckPendingTimeOut = new Handler<CheckPendingTimeOut>() {
         @Override
-        public void handle(CheckTimeOut e) {
-            //TODO
+        public void handle(CheckPendingTimeOut e) {
+
+            
+            /*Start the time out of pending lists check*/
+            ScheduleTimeout st = new ScheduleTimeout(1000);
+            st.setTimeoutEvent(new CheckPendingTimeOut(st));
+            trigger(st, timer);
+        }
+    };
+    Handler<LpbTimeOut> handleLpbTimeOut = new Handler<LpbTimeOut>() {
+        @Override
+        public void handle(LpbTimeOut e) {
+            if (e.getSequenceNumber() > next.get(e.getSource())) {
+                next.put(e.getSource(), e.getSequenceNumber() + 1);
+            }
         }
     };
 }

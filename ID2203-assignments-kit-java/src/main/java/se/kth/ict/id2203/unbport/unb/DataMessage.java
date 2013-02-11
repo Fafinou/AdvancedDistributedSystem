@@ -13,9 +13,15 @@ import se.sics.kompics.address.Address;
  */
 public class DataMessage extends Flp2pDeliver {
     
+    private int sequenceNumber;
     
-    public DataMessage(Address source){
+    public DataMessage(Address source, int sequenceNumber){
         super(source);
+        this.sequenceNumber = sequenceNumber;
     }
-    
+
+    public int getSequenceNumber() {
+        return sequenceNumber;
+    }
+ 
 }

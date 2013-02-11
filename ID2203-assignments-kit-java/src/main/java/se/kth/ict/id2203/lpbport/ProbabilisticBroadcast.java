@@ -11,5 +11,9 @@ import se.sics.kompics.PortType;
  * @author fingolfin
  */
 public class ProbabilisticBroadcast extends PortType {
+    {
+        indication(PbDeliver.class);
+        request(PbBroadcast.class);
+    }
     
 }

@@ -52,7 +52,9 @@ public class SUB extends ComponentDefinition{
             Iterator<Address> iterNodes = allNodes.iterator();
             while (iterNodes.hasNext()) {
                 Address address = iterNodes.next();
-                trigger(new Flp2pSend(address, new DataMessage(self)), flp2p);
+                trigger(new Flp2pSend(address, 
+                            new DataMessage(e.getSource(), e.getsequenceNumber())),
+                        flp2p);
             }
         }
     };

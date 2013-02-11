@@ -11,5 +11,8 @@ import se.sics.kompics.PortType;
  * @author fingolfin
  */
 public class UnreliableBroadcast extends PortType{
-    
+    {
+        indication(UnDeliver.class);
+        request(UnBroadcast.class);
+    }
 }

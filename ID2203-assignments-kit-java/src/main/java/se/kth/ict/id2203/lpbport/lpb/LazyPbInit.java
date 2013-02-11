@@ -11,19 +11,19 @@ import sun.java2d.pipe.AlphaColorPipe;
 public class LazyPbInit extends Init {
     private Topology topology;
     private int fanOut;
-    private double alpha;
-    private int R;
+    private double storeThreshold;
+    private int maxRound;
     private int delay;
 
     public Topology getTopology() {
         return topology;
     }
 
-    public LazyPbInit(Topology topology, int fanOut, double alpha, int R, int delay) {
+    public LazyPbInit(Topology topology, int fanOut, double storeThreshold, int maxRound, int delay) {
         this.topology = topology;
         this.fanOut = fanOut;
-        this.alpha = alpha;
-        this.R = R;
+        this.storeThreshold = storeThreshold;
+        this.maxRound = maxRound;
         this.delay = delay;
     }
 
@@ -31,12 +31,12 @@ public class LazyPbInit extends Init {
         return fanOut;
     }
 
-    double getAlpha() {
-        return this.alpha;
+    double getStoreThreshold() {
+        return this.storeThreshold;
     }
 
-    int getR() {
-        return this.R;
+    int getMaxRound() {
+        return this.maxRound;
     }
 
     int getDelay() {

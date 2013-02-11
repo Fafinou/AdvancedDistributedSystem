@@ -4,24 +4,20 @@
  */
 package se.kth.ict.id2203.lpbport.lpb;
 
-import com.sun.xml.internal.ws.api.pipe.NextAction;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.kth.ict.id2203.application.Application2;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
-import se.kth.ict.id2203.flp2p.Flp2pDeliver;
 import se.kth.ict.id2203.flp2p.Flp2pSend;
 import se.kth.ict.id2203.lpbport.PbBroadcast;
 import se.kth.ict.id2203.lpbport.PbDeliver;
 import se.kth.ict.id2203.lpbport.ProbabilisticBroadcast;
-import se.kth.ict.id2203.pfdp.pfd.CheckTimeOut;
-import se.kth.ict.id2203.pfdp.pfd.HeartBeatTimeOut;
+import se.kth.ict.id2203.unbport.UnBroadcast;
 import se.kth.ict.id2203.unbport.UnDeliver;
 import se.kth.ict.id2203.unbport.UnreliableBroadcast;
 import se.kth.ict.id2203.unbport.unb.DataMessage;
@@ -31,7 +27,6 @@ import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
 import se.sics.kompics.Positive;
 import se.sics.kompics.address.Address;
-import se.sics.kompics.launch.Topology;
 import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
 
@@ -45,6 +40,8 @@ public class LazyPb extends ComponentDefinition {
     Positive<UnreliableBroadcast> ub = requires(UnreliableBroadcast.class);
     Positive<FairLossPointToPointLink> flp2p = requires(FairLossPointToPointLink.class);
     Positive<Timer> timer = requires(Timer.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(Application2.class);
 
     public LazyPb() {
         /*subscribe(eachHandler, respective port);*/
@@ -54,6 +51,7 @@ public class LazyPb extends ComponentDefinition {
         subscribe(handleFllRequestDeliver, flp2p);
         subscribe(handleFllDataDeliver, flp2p);
         subscribe(handleLpbTimeOut, timer);
+        subscribe(handleCheckPendingTimeOut, timer);
 
     }
 
@@ -73,9 +71,8 @@ public class LazyPb extends ComponentDefinition {
     private ArrayList<DataMessage> stored = null;
     private ArrayList<Address> allNodes;
     private int fanOut = 0;
-    private Random randomGen = null;
-    private double alpha = 0;
-    private int R = 0;
+    private double storeThreshold = 0;
+    private int maxRound = 0;
     private int delay;
 
     private void gossip(RequestMessage msg) {
@@ -96,7 +93,7 @@ public class LazyPb extends ComponentDefinition {
     }
 
     private boolean existMessageSequenceNumber(ArrayList<DataMessage> pending, int sequenceNumber) {
-        Iterator<DataMessage> iter = pending.iterator();
+                Iterator<DataMessage> iter = pending.iterator();
         while (iter.hasNext()) {
             DataMessage dataMessage = iter.next();
             if (dataMessage.getSequenceNumber() == sequenceNumber) {
@@ -104,6 +101,17 @@ public class LazyPb extends ComponentDefinition {
             }
         }
         return false;
+    }
+    
+    private DataMessage getMessageToDeliver(ArrayList<DataMessage> pending){
+        Iterator<DataMessage> iter = pending.iterator();
+        while (iter.hasNext()) {
+            DataMessage dataMessage = iter.next();
+            if (dataMessage.getSequenceNumber() == next.get(dataMessage.getSource())) {
+                    return dataMessage;
+            }
+        }
+        return null;
     }
     
 
@@ -123,6 +131,7 @@ public class LazyPb extends ComponentDefinition {
     Handler<LazyPbInit> handleInit = new Handler<LazyPbInit>() {
         @Override
         public void handle(LazyPbInit e) {
+            logger.info("start");
             next = initNext(e.getTopology().getAllAddresses());
             lsn = 0;
             pending = new ArrayList<DataMessage>();
@@ -131,11 +140,9 @@ public class LazyPb extends ComponentDefinition {
             allNodes = new ArrayList<Address>(e.getTopology().getNeighbors(self));
             fanOut = e.getFanOut();
 
-            /*init the random generator*/
-            randomGen = new Random();
-            /*init alpha*/
-            alpha = e.getAlpha();
-            R = e.getR();
+            /*init storeThreshold*/
+            storeThreshold = e.getStoreThreshold();
+            maxRound = e.getMaxRound();
             delay = e.getDelay();
 
             /*Start the time out of pending lists check*/
@@ -149,32 +156,32 @@ public class LazyPb extends ComponentDefinition {
         @Override
         public void handle(PbBroadcast e) {
             lsn++;
-            trigger(new DataMessage(self, lsn), ub);
+            trigger(new UnBroadcast(new DataMessage(self,lsn, e.getMsg())), ub);
         }
     };
     Handler<UnDeliver> handleUnDeliver = new Handler<UnDeliver>() {
         @Override
         public void handle(UnDeliver e) {
             DataMessage tmpMsg = e.getMsg();
-            if (Math.random() > alpha) {
+            if (Math.random() > storeThreshold) {
                 stored.add(tmpMsg);
-            } else if (e.getMsg().getSequenceNumber()
+            } else if (tmpMsg.getSequenceNumber()
                     == next.get(tmpMsg.getSource())) {
                 int newNext = next.get(tmpMsg.getSource());
                 newNext++;
                 next.put(tmpMsg.getSource(), newNext);
 
                 /*deliver*/
-                trigger(new PbDeliver(tmpMsg.getSource()), pb);
+                trigger(new PbDeliver(tmpMsg.getSource(), tmpMsg.getMsg()), pb);
 
             } else if (tmpMsg.getSequenceNumber()
                     > next.get(tmpMsg.getSource())) {
                 pending.add(tmpMsg);
                 for (int i = next.get(tmpMsg.getSource());
-                        i < (tmpMsg.getSequenceNumber() - 1);
+                        i <= (tmpMsg.getSequenceNumber() - 1);
                         i++) {
                     if (!existMessageSequenceNumber(pending, i)) {
-                        gossip(new RequestMessage(self, tmpMsg.getSource(), i, R - 1));
+                        gossip(new RequestMessage(self, tmpMsg.getSource(), i, maxRound - 1));
                     }
                 }
                 startTimer(delay, tmpMsg.getSource(), tmpMsg.getSequenceNumber());
@@ -204,7 +211,16 @@ public class LazyPb extends ComponentDefinition {
     Handler<CheckPendingTimeOut> handleCheckPendingTimeOut = new Handler<CheckPendingTimeOut>() {
         @Override
         public void handle(CheckPendingTimeOut e) {
-
+            DataMessage dataMsg = getMessageToDeliver(pending);
+            //logger.info("starting check pending");
+            while(dataMsg != null){
+                next.put(dataMsg.getSource(), next.get(dataMsg.getSource())+1);
+                Address source = dataMsg.getSource();
+                String msg = dataMsg.getMsg();
+                pending.remove(dataMsg);
+                trigger(new PbDeliver(source, msg), pb);
+                dataMsg = getMessageToDeliver(pending);
+            }
             
             /*Start the time out of pending lists check*/
             ScheduleTimeout st = new ScheduleTimeout(1000);

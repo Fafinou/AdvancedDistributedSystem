@@ -41,7 +41,7 @@ public class SUB extends ComponentDefinition{
         @Override
         public void handle(SUBInit e) {
             self = e.getTopology().getSelfAddress();
-            allNodes = new HashSet<Address>(e.getTopology().getNeighbors(self));
+            allNodes = new HashSet<Address>(e.getTopology().getAllAddresses());
         }
     };
     
@@ -50,11 +50,10 @@ public class SUB extends ComponentDefinition{
         @Override
         public void handle(UnBroadcast e) {
             Iterator<Address> iterNodes = allNodes.iterator();
+            DataMessage toSend = e.getDataMsg();
             while (iterNodes.hasNext()) {
                 Address address = iterNodes.next();
-                trigger(new Flp2pSend(address, 
-                            new DataMessage(e.getSource(), e.getsequenceNumber())),
-                        flp2p);
+                trigger(new Flp2pSend(address, toSend),flp2p);
             }
         }
     };

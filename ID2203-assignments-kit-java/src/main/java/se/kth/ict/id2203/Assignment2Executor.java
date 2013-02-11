@@ -26,8 +26,8 @@ public class Assignment2Executor {
                 node(3, "127.0.0.1", 22032);
                 node(4, "127.0.0.1", 22033);
                 node(5, "127.0.0.1", 22034);
-                //link(4, 2, 1500, 0.5);
-                defaultLinks(1000, 0);
+                
+                defaultLinks(500, 0);
             }
         };
 
@@ -43,12 +43,12 @@ public class Assignment2Executor {
         };
 
 
-        Scenario scenarioPfd = new Scenario(Assignment1aMain.class) {
+        Scenario scenario1 = new Scenario(Assignment2Main.class) {
             {
-                command(1, "S500:S2000:X");
-                command(2, "S500:S4000:S5000:X");
-                command(3, "S2500:X");
-                command(4, "X");
+                command(1, "S500:S2000:B42");
+                command(2, "S500:Bho");
+                command(3, "S2500:Bsalut");
+                command(4, "S23000");
                 command(5,"S60000");
             }
         };
@@ -74,7 +74,7 @@ public class Assignment2Executor {
         };
 
         //scenarioPfd.executeOn(topology2);
-        scenarioEpfd.executeOn(topology2);
+        scenario1.executeOn(topology2);
         
         //scenario1.executeOn(topology2);
         // scenario2.executeOn(topology1);

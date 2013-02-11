@@ -10,12 +10,18 @@ import se.sics.kompics.address.Address;
 public class PbBroadcast extends Event{
 
     private Address source;
-    public PbBroadcast(Address source) {
+    private String msg;
+    public PbBroadcast(Address source, String msg) {
         this.source = source;
+        this.msg = msg;
     }
 
     public Address getSource() {
         return source;
+    }
+
+    public String getMsg() {
+        return msg;
     }
     
     

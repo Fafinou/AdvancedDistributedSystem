@@ -4,6 +4,7 @@
  */
 package se.kth.ict.id2203.unbport;
 
+import se.kth.ict.id2203.unbport.unb.DataMessage;
 import se.sics.kompics.Event;
 import se.sics.kompics.address.Address;
 
@@ -13,21 +14,23 @@ import se.sics.kompics.address.Address;
  */
 public class UnBroadcast extends Event {
 
-    private int sequenceNumber;
-    private Address source;
 
-    public UnBroadcast(int sequenceNumber, Address source) {
+    private DataMessage dataMsg;
+
+    /*
+    public UnBroadcast(int sequenceNumber, Address source, String msg) {
         this.sequenceNumber = sequenceNumber;
         this.source = source;
+        this.msg = msg;
     }
-    
-    
-    public int getsequenceNumber() {
-        return sequenceNumber;
+    */
+
+    public UnBroadcast(DataMessage dataMsg) {
+        this.dataMsg = dataMsg;
     }
 
-    public Address getSource() {
-        return source;
+    public DataMessage getDataMsg() {
+        return dataMsg;
     }
     
     

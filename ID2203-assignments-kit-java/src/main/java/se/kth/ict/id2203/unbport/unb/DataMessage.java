@@ -14,10 +14,12 @@ import se.sics.kompics.address.Address;
 public class DataMessage extends Flp2pDeliver {
     
     private int sequenceNumber;
+    private String msg;
     
-    public DataMessage(Address source, int sequenceNumber){
+    public DataMessage(Address source, int sequenceNumber, String msg){
         super(source);
         this.sequenceNumber = sequenceNumber;
+        this.msg = msg;
     }
 
     public int getSequenceNumber() {
@@ -40,11 +42,16 @@ public class DataMessage extends Flp2pDeliver {
             return false;
         }
         final DataMessage other = (DataMessage) obj;
-        if (this.sequenceNumber != other.sequenceNumber) {
+        if (this.sequenceNumber != other.sequenceNumber ||
+                this.getSource() != other.getSource()) {
             return false;
         }
         
         return true;
+    }
+
+    public String getMsg() {
+        return this.msg;
     }
  
     

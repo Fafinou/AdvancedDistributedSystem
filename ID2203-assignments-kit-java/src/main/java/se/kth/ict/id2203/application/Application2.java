@@ -4,7 +4,6 @@
  */
 package se.kth.ict.id2203.application;
 
-import se.sics.kompics.ComponentDefinition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,19 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.console.Console;
 import se.kth.ict.id2203.console.ConsoleLine;
-import se.kth.ict.id2203.epfdp.EventuallyPerfectFailureDetector;
-import se.kth.ict.id2203.epfdp.Restore;
-import se.kth.ict.id2203.epfdp.Suspect;
-import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
-import se.kth.ict.id2203.flp2p.Flp2pSend;
 import se.kth.ict.id2203.lpbport.PbBroadcast;
 import se.kth.ict.id2203.lpbport.PbDeliver;
 import se.kth.ict.id2203.lpbport.ProbabilisticBroadcast;
-import se.kth.ict.id2203.pfdp.Crash;
-import se.kth.ict.id2203.pfdp.PerfectFailureDetector;
-import se.kth.ict.id2203.pfdp.pfd.HeartBeatMessage;
-import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
-import se.kth.ict.id2203.pp2p.Pp2pSend;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Kompics;
@@ -44,7 +33,7 @@ public class Application2 extends ComponentDefinition{
     Positive<ProbabilisticBroadcast> pb = requires(ProbabilisticBroadcast.class);
     Positive<Console> con = requires(Console.class);
     private static final Logger logger =
-            LoggerFactory.getLogger(Application1a.class);
+            LoggerFactory.getLogger(Application2.class);
     private List<String> commands;
     private boolean blocking;
     private Set<Address> neighborSet;
@@ -61,8 +50,8 @@ public class Application2 extends ComponentDefinition{
         subscribe(handleDeliver, pb);
         
     }
-    Handler<Application1bInit> handleInit = new Handler<Application1bInit>() {
-        public void handle(Application1bInit event) {
+    Handler<Application2Init> handleInit = new Handler<Application2Init>() {
+        public void handle(Application2Init event) {
             neighborSet = event.getNeighborSet();
             self = event.getSelf();
             commands = new ArrayList<String>(Arrays.asList(event.getCommandScript().split(":")));
@@ -95,7 +84,7 @@ public class Application2 extends ComponentDefinition{
 
         @Override
         public void handle(PbDeliver e) {
-            logger.info("Received a message from: "+e.getSource());
+            logger.info("Received a message "+e.getMsg()+" from: "+e.getSource());
         }
     };
     
@@ -114,8 +103,8 @@ public class Application2 extends ComponentDefinition{
             doRecovery();
         } else if (cmd.equals("help")) {
             doHelp();
-        }else if (cmd.equals("B")){
-            doBroadCast();
+        }else if (cmd.startsWith("B")){
+            doBroadCast(cmd.substring(1));
         } else if (cmd.equals("$DONE")) {
             logger.info("DONE ALL OPERATIONS");
         } else {
@@ -154,8 +143,9 @@ public class Application2 extends ComponentDefinition{
         logger.info("Node {} recovered from crash",self);
     }
 
-    private void doBroadCast() {
-        trigger(new PbBroadcast(self),pb);
+    private void doBroadCast(String msg) {
+        logger.info("broadcasting");
+        trigger(new PbBroadcast(self, msg),pb);
     }
     
 }

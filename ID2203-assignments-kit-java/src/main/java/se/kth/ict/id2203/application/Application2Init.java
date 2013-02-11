@@ -14,12 +14,55 @@ import se.sics.kompics.address.Address;
  */
 public class Application2Init extends Init {
 
-    public Application2Init(String commandScript, Set<Address> neighborSet, Address self) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+    
+    private final String commandScript;
 
-    public Application2Init() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+	private final Set<Address> neighborSet;
+	
+	private final Address self;
+	
+	/**
+	 * Instantiates a new application0 init.
+	 * 
+	 * @param commandScript
+	 *            the command script
+	 * @param neighborSet
+	 *            the neighbor set
+	 * @param self
+	 *            the self
+	 */
+	public Application2Init(String commandScript, Set<Address> neighborSet, Address self) {
+		super();
+		this.commandScript = commandScript;
+		this.neighborSet = neighborSet;
+		this.self = self;
+	}
+	
+	/**
+	 * Gets the command script.
+	 * 
+	 * @return the command script
+	 */
+	public final String getCommandScript() {
+		return commandScript;
+	}
+	
+	/**
+	 * Gets the neighbor set.
+	 * 
+	 * @return the neighbor set
+	 */
+	public final Set<Address> getNeighborSet() {
+		return neighborSet;
+	}
+	
+	/**
+	 * Gets the self.
+	 * 
+	 * @return the self
+	 */
+	public final Address getSelf() {
+		return self;
+	}
     
 }

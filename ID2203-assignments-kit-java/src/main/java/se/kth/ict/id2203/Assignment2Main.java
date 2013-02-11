@@ -28,6 +28,7 @@ import se.kth.ict.id2203.pfdp.pfd.PfdInit;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLink;
 import se.kth.ict.id2203.pp2p.delay.DelayLinkInit;
+import se.kth.ict.id2203.unbport.UnreliableBroadcast;
 import se.kth.ict.id2203.unbport.unb.SUB;
 import se.kth.ict.id2203.unbport.unb.SUBInit;
 import se.sics.kompics.Component;
@@ -95,7 +96,7 @@ public class Assignment2Main extends ComponentDefinition {
 
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayDropLinkInit(topology, 42), flp2p.control());
-        trigger(new Application2Init(), app.control());
+        trigger(new Application2Init(commandScript, neighborSet, self), app.control());
         trigger(new SUBInit(topology), sub.control());
         trigger(new LazyPbInit(), sub.control());
 
@@ -105,18 +106,20 @@ public class Assignment2Main extends ComponentDefinition {
         connect(app.required(ProbabilisticBroadcast.class),
                 lpb.provided(ProbabilisticBroadcast.class));
         connect(app.required(Timer.class), time.provided(Timer.class));
-        
-        connect(epfd.required(Timer.class), time.provided(Timer.class));
-
-
         connect(app.required(Console.class),
                 con.provided(Console.class));
-       
         
-        connect(app.required(EventuallyPerfectFailureDetector.class),
-                epfd.provided(EventuallyPerfectFailureDetector.class));
-        connect(pp2p.required(Timer.class), time.provided(Timer.class));
-        connect(pp2p.required(Network.class), network.provided(Network.class));
+        connect(lpb.required(Timer.class), time.provided(Timer.class));
+        connect(lpb.required(UnreliableBroadcast.class),
+                sub.provided(UnreliableBroadcast.class));
+        connect(lpb.required(FairLossPointToPointLink.class),
+                flp2p.provided(FairLossPointToPointLink.class));
+
+        connect(sub.required(FairLossPointToPointLink.class),
+                flp2p.provided(FairLossPointToPointLink.class));
+       
+        connect(flp2p.required(Timer.class), time.provided(Timer.class));
+        connect(flp2p.required(Network.class), network.provided(Network.class));
 
 
     }

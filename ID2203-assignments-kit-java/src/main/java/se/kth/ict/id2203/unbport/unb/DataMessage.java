@@ -12,7 +12,10 @@ import se.sics.kompics.address.Address;
  * @author fingolfin
  */
 public class DataMessage extends Flp2pDeliver {
+    
+    
     public DataMessage(Address source){
         super(source);
     }
+    
 }

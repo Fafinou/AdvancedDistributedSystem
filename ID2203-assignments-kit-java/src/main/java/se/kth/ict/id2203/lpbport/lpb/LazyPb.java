@@ -167,6 +167,7 @@ public class LazyPb extends ComponentDefinition {
                 stored.add(tmpMsg);
             } else if (tmpMsg.getSequenceNumber()
                     == next.get(tmpMsg.getSource())) {
+                logger.info("didn't store message "+tmpMsg.getMsg()+" from "+tmpMsg.getSource());
                 int newNext = next.get(tmpMsg.getSource());
                 newNext++;
                 next.put(tmpMsg.getSource(), newNext);
@@ -176,6 +177,7 @@ public class LazyPb extends ComponentDefinition {
 
             } else if (tmpMsg.getSequenceNumber()
                     > next.get(tmpMsg.getSource())) {
+                logger.info("didn't store message "+tmpMsg.getMsg()+" from "+tmpMsg.getSource());
                 pending.add(tmpMsg);
                 for (int i = next.get(tmpMsg.getSource());
                         i <= (tmpMsg.getSequenceNumber() - 1);
@@ -218,6 +220,7 @@ public class LazyPb extends ComponentDefinition {
                 Address source = dataMsg.getSource();
                 String msg = dataMsg.getMsg();
                 pending.remove(dataMsg);
+                logger.info("Recovered msg "+ msg + " from "+ source + " with gossiping");
                 trigger(new PbDeliver(source, msg), pb);
                 dataMsg = getMessageToDeliver(pending);
             }
@@ -231,6 +234,7 @@ public class LazyPb extends ComponentDefinition {
     Handler<LpbTimeOut> handleLpbTimeOut = new Handler<LpbTimeOut>() {
         @Override
         public void handle(LpbTimeOut e) {
+            logger.info("Unable to find a lost message... Skiping");
             if (e.getSequenceNumber() > next.get(e.getSource())) {
                 next.put(e.getSource(), e.getSequenceNumber() + 1);
             }

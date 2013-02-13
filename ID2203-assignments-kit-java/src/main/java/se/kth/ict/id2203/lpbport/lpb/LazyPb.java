@@ -81,7 +81,7 @@ public class LazyPb extends ComponentDefinition {
         int i = 0;
         while (iter.hasNext() && i < fanOut) {
             i++;
-            trigger(new Flp2pSend(iter.next(), msg), pb);
+            trigger(new Flp2pSend(iter.next(), msg), flp2p);
         }
     }
 
@@ -164,10 +164,11 @@ public class LazyPb extends ComponentDefinition {
         public void handle(UnDeliver e) {
             DataMessage tmpMsg = e.getMsg();
             if (Math.random() > storeThreshold) {
+                //logger.info("stored msg: " + tmpMsg.getMsg());
                 stored.add(tmpMsg);
             } else if (tmpMsg.getSequenceNumber()
                     == next.get(tmpMsg.getSource())) {
-                logger.info("didn't store message "+tmpMsg.getMsg()+" from "+tmpMsg.getSource());
+                //logger.info("didn't store message "+tmpMsg.getMsg()+" from "+tmpMsg.getSource());
                 int newNext = next.get(tmpMsg.getSource());
                 newNext++;
                 next.put(tmpMsg.getSource(), newNext);
@@ -207,6 +208,7 @@ public class LazyPb extends ComponentDefinition {
     Handler<DataMessage> handleFllDataDeliver = new Handler<DataMessage>() {
         @Override
         public void handle(DataMessage e) {
+            
             pending.add(e);
         }
     };

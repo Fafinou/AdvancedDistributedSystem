@@ -98,7 +98,7 @@ public class Assignment2Main extends ComponentDefinition {
         trigger(new DelayDropLinkInit(topology, 42), flp2p.control());
         trigger(new Application2Init(commandScript, neighborSet, self), app.control());
         trigger(new SUBInit(topology), sub.control());
-        trigger(new LazyPbInit(topology, 3, 0.6, 4, 3000), lpb.control());
+        trigger(new LazyPbInit(topology, 4, 0.6, 4, 3000), lpb.control());
 
         // connect the components
 

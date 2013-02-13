@@ -7,6 +7,9 @@ package se.kth.ict.id2203.unbport.unb;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.kth.ict.id2203.application.Application2;
 import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
 import se.kth.ict.id2203.flp2p.Flp2pDeliver;
 import se.kth.ict.id2203.flp2p.Flp2pSend;
@@ -26,6 +29,8 @@ import se.sics.kompics.address.Address;
 public class SUB extends ComponentDefinition{
     Negative<UnreliableBroadcast> ubp = provides(UnreliableBroadcast.class);
     Positive<FairLossPointToPointLink> flp2p = requires(FairLossPointToPointLink.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(Application2.class);
      public SUB() {
         /*subscribe(eachHandler, respective port);*/
         subscribe(handleInit, control);
@@ -62,6 +67,7 @@ public class SUB extends ComponentDefinition{
 
         @Override
         public void handle(DataMessage e) {
+            logger.info("unreliable broadcast received a msg");
             trigger(new UnDeliver(e), ubp);
         }
     };

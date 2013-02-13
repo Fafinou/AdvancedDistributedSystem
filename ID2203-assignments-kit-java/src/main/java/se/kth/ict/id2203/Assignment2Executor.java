@@ -21,35 +21,21 @@ public class Assignment2Executor {
 
         Topology topology2 = new Topology() {
             {
-                node(1, "127.0.0.1", 22030);
-                node(2, "127.0.0.1", 22031);
-                node(3, "127.0.0.1", 22032);
-                node(4, "127.0.0.1", 22033);
-                node(5, "127.0.0.1", 22034);
-                
-                defaultLinks(500, 0);
-            }
-        };
-
-        Topology topology1 = new Topology() {
-            {
-                node(1, "127.0.0.1", 22031);
-                node(2, "127.0.0.1", 22032);
-                node(3, "127.0.0.1", 22033);
-                link(1, 2, 3000, 0).bidirectional();
-                link(2, 3, 3000, 0);
-                defaultLinks(1000, 0);
+                for (int i = 1; i <= 10; i++) {
+                    node(i, "127.0.0.1",22050+i);
+                }
+                defaultLinks(1500, 0.3);
             }
         };
 
 
         Scenario scenario1 = new Scenario(Assignment2Main.class) {
             {
-                command(1, "S500:S2000:B42");
-                command(2, "S500:Bho");
-                command(3, "S2500:Bsalut");
-                command(4, "S23000");
-                command(5,"S60000");
+                for (int i = 1; i <= 10; i++) {
+                    command(i, "Bmsgfrom"+i+":S1500:Bother_msg_from"+i);
+                    
+                }
+                
             }
         };
 
@@ -63,15 +49,6 @@ public class Assignment2Executor {
         };
 
         
-        Scenario scenarioEpfd = new Scenario(Assignment1bMain.class) {
-            {
-                command(1, "S40000:X");
-                command(2, "S18000:X");
-                command(3, "S10000:X").recover("R:S42000:X", 4000);
-                command(4, "S4000:X");
-                command(5,"S120000");
-            }
-        };
 
         //scenarioPfd.executeOn(topology2);
         scenario1.executeOn(topology2);

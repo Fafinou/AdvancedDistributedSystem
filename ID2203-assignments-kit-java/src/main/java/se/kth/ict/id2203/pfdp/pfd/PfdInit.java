@@ -10,7 +10,7 @@ import se.sics.kompics.launch.Topology;
 
 /**
  * 
- * @author Alex, Simon
+ * @author fingolfin & alegeo
  */
 public class PfdInit extends Init {
 

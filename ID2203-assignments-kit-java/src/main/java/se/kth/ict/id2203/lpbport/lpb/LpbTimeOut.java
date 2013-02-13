@@ -6,7 +6,7 @@ import se.sics.kompics.timer.Timeout;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class LpbTimeOut extends Timeout{
     

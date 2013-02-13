@@ -46,7 +46,7 @@ import se.sics.kompics.timer.java.JavaTimer;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class Assignment2Main extends ComponentDefinition {
     static {

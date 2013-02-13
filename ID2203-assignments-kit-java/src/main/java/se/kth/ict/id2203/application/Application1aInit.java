@@ -10,7 +10,7 @@ import se.sics.kompics.address.Address;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class Application1aInit extends Init {
     	private final String commandScript;

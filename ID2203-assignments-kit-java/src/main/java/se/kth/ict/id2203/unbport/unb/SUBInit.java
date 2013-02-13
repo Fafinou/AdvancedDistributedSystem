@@ -10,7 +10,7 @@ import se.sics.kompics.launch.Topology;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class SUBInit extends Init {
     private final Topology topology;

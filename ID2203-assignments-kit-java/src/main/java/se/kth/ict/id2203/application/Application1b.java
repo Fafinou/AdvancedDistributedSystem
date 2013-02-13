@@ -31,7 +31,7 @@ import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class Application1b extends ComponentDefinition {
     

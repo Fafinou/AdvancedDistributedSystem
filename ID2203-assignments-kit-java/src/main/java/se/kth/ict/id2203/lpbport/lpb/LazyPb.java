@@ -28,7 +28,7 @@ import se.sics.kompics.timer.Timer;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class LazyPb extends ComponentDefinition {
 

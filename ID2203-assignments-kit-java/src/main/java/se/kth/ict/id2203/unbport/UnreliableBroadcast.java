@@ -8,7 +8,7 @@ import se.sics.kompics.PortType;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class UnreliableBroadcast extends PortType{
     {

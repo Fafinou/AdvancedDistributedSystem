@@ -9,7 +9,7 @@ import se.sics.kompics.address.Address;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class Restore extends Event{
     

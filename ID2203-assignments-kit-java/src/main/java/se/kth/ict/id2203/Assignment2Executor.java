@@ -9,7 +9,7 @@ import se.sics.kompics.launch.Topology;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class Assignment2Executor {
        /**

@@ -10,7 +10,7 @@ import se.sics.kompics.timer.Timeout;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class HeartBeatTimeOut extends Timeout {
 

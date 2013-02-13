@@ -30,7 +30,7 @@ import se.sics.kompics.timer.Timer;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class Application1a extends ComponentDefinition {
     

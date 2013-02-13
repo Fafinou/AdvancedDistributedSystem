@@ -7,9 +7,6 @@ import se.sics.kompics.network.Transport;
 
 public final class DelayLinkMessage extends Message {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8044668011408046391L;
 	
 	private final Pp2pDeliver deliverEvent;

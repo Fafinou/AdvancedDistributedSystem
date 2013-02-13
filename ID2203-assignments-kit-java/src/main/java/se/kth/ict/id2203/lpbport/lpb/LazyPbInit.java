@@ -6,7 +6,7 @@ import sun.java2d.pipe.AlphaColorPipe;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class LazyPbInit extends Init {
     private Topology topology;

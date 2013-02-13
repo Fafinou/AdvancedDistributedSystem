@@ -9,7 +9,7 @@ import se.sics.kompics.address.Address;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class RequestMessage extends Flp2pDeliver {
     private Address requestedSource;

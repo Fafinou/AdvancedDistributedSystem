@@ -26,7 +26,7 @@ import se.sics.kompics.timer.Timer;
 
 /**
  *
- * @author fingolfin
+ * @author fingolfin & alegeo
  */
 public class Application2 extends ComponentDefinition{
     Positive<Timer> timer = requires(Timer.class);

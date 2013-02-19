@@ -2,12 +2,6 @@ package se.kth.ict.id2203;
 
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
-import se.kth.ict.id2203.application.Application1a;
-import se.kth.ict.id2203.application.Application1aInit;
-import se.kth.ict.id2203.application.Application1b;
-import se.kth.ict.id2203.application.Application1bInit;
-import se.kth.ict.id2203.application.Application2;
-import se.kth.ict.id2203.application.Application2Init;
 import se.kth.ict.id2203.application.Application3a;
 import se.kth.ict.id2203.application.Application3aInit;
 import se.kth.ict.id2203.bebport.BEB;
@@ -15,15 +9,6 @@ import se.kth.ict.id2203.bebport.beb.BasicBcast;
 import se.kth.ict.id2203.bebport.beb.BasicBcastInit;
 import se.kth.ict.id2203.console.Console;
 import se.kth.ict.id2203.console.java.JavaConsole;
-import se.kth.ict.id2203.epfdp.EventuallyPerfectFailureDetector;
-import se.kth.ict.id2203.epfdp.epfd.EPFD;
-import se.kth.ict.id2203.epfdp.epfd.EPFDinit;
-import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
-import se.kth.ict.id2203.flp2p.delay.DelayDropLink;
-import se.kth.ict.id2203.flp2p.delay.DelayDropLinkInit;
-import se.kth.ict.id2203.lpbport.ProbabilisticBroadcast;
-import se.kth.ict.id2203.lpbport.lpb.LazyPb;
-import se.kth.ict.id2203.lpbport.lpb.LazyPbInit;
 import se.kth.ict.id2203.pfdp.PerfectFailureDetector;
 import se.kth.ict.id2203.pfdp.pfd.PFD;
 import se.kth.ict.id2203.pfdp.pfd.PfdInit;
@@ -33,9 +18,6 @@ import se.kth.ict.id2203.pp2p.delay.DelayLinkInit;
 import se.kth.ict.id2203.riwcport.AtomicRegister;
 import se.kth.ict.id2203.riwcport.riwc.RIWC;
 import se.kth.ict.id2203.riwcport.riwc.RIWCInit;
-import se.kth.ict.id2203.unbport.UnreliableBroadcast;
-import se.kth.ict.id2203.unbport.unb.SUB;
-import se.kth.ict.id2203.unbport.unb.SUBInit;
 import se.sics.kompics.Component;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Fault;
@@ -51,7 +33,7 @@ import se.sics.kompics.timer.java.JavaTimer;
 
 /**
  *
- * @author ALEX
+ * @author ALEX & fingolfin
  */
 public class Assignment3aMain extends ComponentDefinition {
      static {
@@ -113,12 +95,17 @@ public class Assignment3aMain extends ComponentDefinition {
     // connect the components
         connect(app.required(AtomicRegister.class), riwc.provided(AtomicRegister.class));
         connect(app.required(Timer.class), time.provided(Timer.class));
+        connect(app.required(Console.class), con.provided(Console.class));
+        
         connect(riwc.required(BEB.class), beb.provided(BEB.class));
         connect(riwc.required(PerfectPointToPointLink.class), pp2p.provided(PerfectPointToPointLink.class));
         connect(riwc.required(PerfectFailureDetector.class), pfd.provided(PerfectFailureDetector.class));
+        
         connect(beb.required(PerfectPointToPointLink.class), pp2p.provided(PerfectPointToPointLink.class));
+        
         connect(pfd.required(PerfectPointToPointLink.class), pp2p.provided(PerfectPointToPointLink.class));
         connect(pfd.required(Timer.class), time.provided(Timer.class));
+        
         connect(pp2p.required(Timer.class), time.provided(Timer.class));
         connect(pp2p.required(Network.class), network.provided(Network.class));
     }

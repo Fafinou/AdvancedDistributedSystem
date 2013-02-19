@@ -5,7 +5,7 @@ import se.sics.kompics.launch.Topology;
 
 /**
  *
- * @author ALEX
+ * @author ALEX & fingolfin
  */
 public class Assignment3abExecutor {
    /**
@@ -26,7 +26,7 @@ public class Assignment3abExecutor {
         };
         
         
-        Scenario scenario3 = new Scenario(Assignment3bMain.class){
+        Scenario scenario3 = new Scenario(Assignment3aMain.class){
             {
                 command(1, "D30000");
                 command(2, "D500:W4:D25000", 100);

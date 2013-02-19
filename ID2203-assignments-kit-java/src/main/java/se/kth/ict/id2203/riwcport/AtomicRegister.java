@@ -4,7 +4,7 @@ import se.sics.kompics.PortType;
 
 /**
  *
- * @author ALEX
+ * @author ALEX & fingolfin
  */
 public class AtomicRegister extends PortType {
     {

@@ -4,7 +4,7 @@ import se.sics.kompics.Event;
 
 /**
  *
- * @author ALEX
+ * @author ALEX & fingolfin
  */
 public class ReadResponse extends Event{
     private int val;

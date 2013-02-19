@@ -5,7 +5,7 @@ import se.sics.kompics.launch.Topology;
 
 /**
  *
- * @author ALEX
+ * @author ALEX & fingolfin
  */
 public class RIWCInit extends Init{
     private Topology topology;

@@ -1,13 +1,5 @@
 package se.kth.ict.id2203.application;
 
-import se.sics.kompics.ComponentDefinition;
-import se.sics.kompics.Handler;
-import se.sics.kompics.Kompics;
-import se.sics.kompics.Positive;
-import se.sics.kompics.Start;
-import se.sics.kompics.address.Address;
-import se.sics.kompics.timer.ScheduleTimeout;
-import se.sics.kompics.timer.Timer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,13 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.console.Console;
 import se.kth.ict.id2203.console.ConsoleLine;
-import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
-import se.kth.ict.id2203.flp2p.Flp2pSend;
-import se.kth.ict.id2203.pfdp.Crash;
-import se.kth.ict.id2203.pfdp.PerfectFailureDetector;
-import se.kth.ict.id2203.pfdp.pfd.HeartBeatMessage;
-import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
-import se.kth.ict.id2203.pp2p.Pp2pSend;
 import se.kth.ict.id2203.riwcport.AtomicRegister;
 import se.kth.ict.id2203.riwcport.ReadRequest;
 import se.kth.ict.id2203.riwcport.ReadResponse;
@@ -38,7 +23,7 @@ import se.sics.kompics.timer.ScheduleTimeout;
 import se.sics.kompics.timer.Timer;
 /**
  *
- * @author ALEX
+ * @author ALEX & fingolfin
  */
 public class Application3a extends ComponentDefinition{
      Positive<Timer> timer = requires(Timer.class);

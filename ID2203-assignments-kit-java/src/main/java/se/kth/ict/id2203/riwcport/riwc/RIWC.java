@@ -2,16 +2,11 @@ package se.kth.ict.id2203.riwcport.riwc;
 
 import java.util.Iterator;
 import java.util.Set;
-import javax.swing.text.DefaultEditorKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.application.Application3a;
 import se.kth.ict.id2203.bebport.BEB;
 import se.kth.ict.id2203.bebport.BebBroadcast;
-import se.kth.ict.id2203.bebport.BebDeliver;
-import se.kth.ict.id2203.bebport.beb.BeBMessage;
-import se.kth.ict.id2203.flp2p.FairLossPointToPointLink;
-import se.kth.ict.id2203.lpbport.ProbabilisticBroadcast;
 import se.kth.ict.id2203.pfdp.Crash;
 import se.kth.ict.id2203.pfdp.PerfectFailureDetector;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
@@ -21,17 +16,15 @@ import se.kth.ict.id2203.riwcport.ReadRequest;
 import se.kth.ict.id2203.riwcport.ReadResponse;
 import se.kth.ict.id2203.riwcport.WriteRequest;
 import se.kth.ict.id2203.riwcport.WriteResponse;
-import se.kth.ict.id2203.unbport.UnreliableBroadcast;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
 import se.sics.kompics.Positive;
 import se.sics.kompics.address.Address;
-import se.sics.kompics.timer.Timer;
 
 /**
  *
- * @author ALEX
+ * @author ALEX & fingolfin
  */
 public class RIWC extends ComponentDefinition {
 

@@ -62,7 +62,7 @@ public class BasicBcast extends ComponentDefinition{
         @Override
         public void handle(BebBroadcast e) {
             Iterator<Address> iterNodes = allNodes.iterator();
-            BeBMessage toSend = e.getBebMsg();
+            BeBMessage toSend = new BeBMessage(self,e.getMsg());
             while (iterNodes.hasNext()) {
                 Address address = iterNodes.next();
                 trigger(new Pp2pSend(address, toSend),pp2p);
@@ -75,7 +75,7 @@ public class BasicBcast extends ComponentDefinition{
         @Override
         public void handle(BeBMessage e) {
             logger.info("unreliable broadcast received a msg");
-            trigger(new BebDeliver(e), beb);
+            trigger(e.getMsg(), beb);
         }
     };
 }

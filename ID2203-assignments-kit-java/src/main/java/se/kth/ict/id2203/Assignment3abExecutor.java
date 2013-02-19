@@ -21,18 +21,16 @@ public class Assignment3abExecutor {
                 node(2, "127.0.0.1", 22032);
                 node(3, "127.0.0.1", 22033);
                 
-                link(1, 2, 1000, 0).bidirectional();
-                link(1, 3, 2000, 0).bidirectional();
-                link(2, 3, 1750, 0).bidirectional();
+                defaultLinks(1000, 0);
             }
         };
         
         
         Scenario scenario3 = new Scenario(Assignment3bMain.class){
             {
-                command(1, "");
-                command(2, "", 100);
-                command(3, "", 200);
+                command(1, "D30000");
+                command(2, "D500:W4:D25000", 100);
+                command(3, "D10000:R", 200);
             }
         };
 

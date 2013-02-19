@@ -7,5 +7,14 @@ import se.sics.kompics.Event;
  * @author ALEX
  */
 public class ReadResponse extends Event{
+    private int val;
+
+    public ReadResponse(int val) {
+        this.val = val;
+    }
+
+    public int getVal() {
+        return val;
+    }
     
 }

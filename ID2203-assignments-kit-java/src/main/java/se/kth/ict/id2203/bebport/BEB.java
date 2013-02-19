@@ -12,12 +12,10 @@ import se.sics.kompics.PortType;
  *
  * @author ALEX
  */
-public class BEB extends PortType{
-    public class AtomicRegister extends PortType {
+public class BEB extends PortType {
+
     {
         indication(BebDeliver.class);
         request(BebBroadcast.class);
     }
-}
-    
 }

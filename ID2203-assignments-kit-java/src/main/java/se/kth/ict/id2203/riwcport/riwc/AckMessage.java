@@ -12,9 +12,18 @@ import se.sics.kompics.address.Address;
  * @author fingolfin
  */
 public class AckMessage extends Pp2pDeliver {
+    private final int id;
 
-    public AckMessage(Address source) {
-        super(source);
+
+    AckMessage(Address self, int reqId) {
+        super(self);
+        this.id = reqId;
     }
+
+    public int getId() {
+        return id;
+    }
+    
+    
     
 }

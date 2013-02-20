@@ -85,6 +85,7 @@ public class Application3a extends ComponentDefinition{
         public void handle(WriteResponse e) {
             logger.info("Writing completed on register " + e.getReg());
             blocking = false;
+            doNextCommand();
         }
     };
     
@@ -94,6 +95,7 @@ public class Application3a extends ComponentDefinition{
         public void handle(ReadResponse e) {
             logger.info("Read value: " + e.getVal()+" On register "+e.getReg());
             blocking = false;
+            doNextCommand();
         }
     };
 

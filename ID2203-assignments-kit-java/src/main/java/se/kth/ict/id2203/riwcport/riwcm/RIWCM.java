@@ -1,5 +1,7 @@
 package se.kth.ict.id2203.riwcport.riwcm;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -96,16 +98,7 @@ public class RIWCM extends ComponentDefinition {
     }
     
     public TimeStampedValue highest(Set<TimeStampedValue> readset1){
-        TimeStampedValue maxValue = null;
-        
-        Iterator<TimeStampedValue> iterate = readset1.iterator();
-        while (iterate.hasNext()) {
-            TimeStampedValue value = iterate.next();
-            
-//                return true;
-//            }
-        }
-        return maxValue ;
+       return Collections.max(readset1);
     }
     
     

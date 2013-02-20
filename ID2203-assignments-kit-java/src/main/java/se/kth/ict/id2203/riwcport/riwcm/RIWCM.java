@@ -160,7 +160,7 @@ public class RIWCM extends ComponentDefinition {
      private void checkReadSet() {
         
         if( readSet.size() > N/2) {
-            //missing line 7 -((t, rk), v) := highest(readSet[r]);
+            
             readVal=v;
             if (reading) {
                trigger(new BebBroadcast(new WriteMessage(reqId, ts, mrank, v, self)), beb);

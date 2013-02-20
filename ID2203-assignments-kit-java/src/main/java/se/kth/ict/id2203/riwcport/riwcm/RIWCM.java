@@ -1,5 +1,6 @@
 package se.kth.ict.id2203.riwcport.riwcm;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ import se.sics.kompics.address.Address;
  *
  * @author ALEX & fingolfin
  */
-public class RIWCM extends ComponentDefinition{
+public class RIWCM extends ComponentDefinition {
     Negative<AtomicRegister> ar = provides(AtomicRegister.class);
     Positive<BEB> beb = requires(BEB.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
@@ -39,17 +40,18 @@ public class RIWCM extends ComponentDefinition{
         subscribe(handleReadRequest, ar);
         subscribe(handleWriteRequest, ar);
         subscribe(handleBebDeliver, beb);
+        subscribe(handlePp2pDeliver, pp2p);
         subscribe(handleAckMessage, pp2p);
     }
     private Set<Address> correct = null;
     private Address self = null;
     private int i;
     private Set<Address> writeSet = null;
-    private Set<Address> readSet = null;
+    private Set<ReadSet> readSet = null;
     private boolean reading;
     private int reqId;
     private int writeVal;
-    private int v;
+    private int val;
     private int ts;
     private int mrank;
    
@@ -64,12 +66,15 @@ public class RIWCM extends ComponentDefinition{
             /*
              * initialize register 0 
              */
+            
+            writeSet = new HashSet <Address>();
             writeSet = null;
-            readSet = null;
+            readSet = new HashSet<ReadSet>();
+            readSet= null;
             reading = false;
             reqId = 0;
             writeVal = 0;
-            v = 0;
+            val = 0;
             ts = 0;
             mrank = 0;
         }
@@ -97,8 +102,8 @@ public class RIWCM extends ComponentDefinition{
             reading = true;
             readSet.clear();
             writeSet.clear();
-            //trigger(new BebBroadcast(new WriteMessage(reqId, self)), beb);
-//algorithm  trigger < bebBroadcast | [Read, r, reqid[r]] >;
+            trigger(new BebBroadcast(new ReadMessage(reqId, self)), beb);
+            //algorithm  trigger < bebBroadcast | [Read, r, reqid[r]] >;
         }
     };
     
@@ -107,32 +112,43 @@ public class RIWCM extends ComponentDefinition{
         @Override
         public void handle(WriteRequest e) {
             reqId = reqId + 1;
-            //writeVal = val;
+            writeVal = val;
             readSet.clear();
             writeSet.clear();
-            //trigger(new BebBroadcast(new WriteMessage(reqId, self)), beb);
-//algorithm trigger < bebBroadcast | [Read, r, reqid[r]] >;
+            trigger(new BebBroadcast(new ReadMessage(reqId, self)), beb);
+            //algorithm trigger < bebBroadcast | [Read, r, reqid[r]] >;
         }
     };
     
-    Handler<WriteMessage> handleBebDeliver = new Handler<WriteMessage>() {
-//algorithm  upon event < bebDeliver | pj , [Read, r, id] > do
+    Handler<ReadMessage> handleBebDeliver = new Handler<ReadMessage>() {
+
         @Override
-        public void handle(WriteMessage e) {
+        public void handle(ReadMessage e) {
             
-        //trigger(new Pp2pSend(self,.... new WriteMessage(e.getReadVal, e.getReqId(), 
-        //                      ts, mrank, v, self)),pp2p);        
-           
+        trigger(new Pp2pSend(self, new ReadValMessage(e.getReqId(), ts, mrank, 
+                                    val, self)),pp2p);                   
 //algorithm: trigger <pp2pSend | pj , [ReadVal, r, id, (ts[r], mrank[r]), v[r]] >;
         }
     };
+    
+ Handler<ReadValMessage> handlePp2pDeliver = new Handler<ReadValMessage>() {
+ 
+ @Override
+        public void handle(ReadValMessage e) {
+                if(e.getId() == reqId){
+                readSet.add(new ReadSet(e.getTs(), e.getMrank(), e.getVal()));    
+                //algorithm   readSet[r] := readSet[r] ∪ {((t, rk), val)};
+                }            
+            }
+ };
+  
     
 //    Handler<AckMessage> handleAckMessage = new Handler<AckMessage>() {
 ////algorithm   upon event < pp2pDeliver | pj , [ReadVal, r, id, (t, rk), val] > do
 //        @Override
 //        public void handle(AckMessage e) {
 //            if(e.getId() == reqId){
-////algorithm   readSet[r] := readSet[r] ∪ {((t, rk), val)};
+
 ////                readSet.add(e.getSource());
 ////                checkCorrectSet();
 //            }
@@ -152,15 +168,17 @@ Handler<AckMessage> handleAckMessage = new Handler<AckMessage>() {
             if(e.getId() == reqId){
                 writeSet.add(e.getSource());
                 //checkCorrectSet();
-            }
-        }        
-        
-
-
-//        upon exists r such that |writeSet[r]| > N=2 do
-        
-        
-        
-    };
-    
+                
+                
+                //        upon exists r such that |writeSet[r]| > N=2 do
+        }       
+        }};
 }
+
+
+        
+        
+        
+   
+
+ 

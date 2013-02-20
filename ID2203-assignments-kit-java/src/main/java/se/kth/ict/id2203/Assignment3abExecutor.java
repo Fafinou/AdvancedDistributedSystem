@@ -15,7 +15,7 @@ public class Assignment3abExecutor {
      */
     public static final void main(String[] args) {
 
-       Topology topologyEx3 = new Topology() {
+       Topology topologyEx1 = new Topology() {
             {
                 node(1, "127.0.0.1", 22030);
                 node(2, "127.0.0.1", 22031);
@@ -24,6 +24,8 @@ public class Assignment3abExecutor {
                 defaultLinks(1000, 0);
             }
         };
+       
+       Topology topologyEx2 = new Topology() {};
         
         
         Scenario scenario3a = new Scenario(Assignment3aMain.class){
@@ -64,8 +66,8 @@ public class Assignment3abExecutor {
 
         //scenarioPfd.executeOn(topology2);
         //scenario1.executeOn(topology2);
-        scenario3a.executeOn(topologyEx3);
-        //scenario3b.executeOn(topologyEx3);
+        scenario3a.executeOn(topologyEx1);
+        //scenario3b.executeOn(topologyEx1);
         //scenario1.executeOn(topology2);
         // scenario2.executeOn(topology1);
         // scenario2.executeOn(topology2);

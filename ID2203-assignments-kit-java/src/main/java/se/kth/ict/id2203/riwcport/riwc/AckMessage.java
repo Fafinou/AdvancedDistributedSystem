@@ -8,7 +8,7 @@ import se.sics.kompics.address.Address;
  * @author ALEX & fingolfin
  */
 public class AckMessage extends Pp2pDeliver {
-    private final int id;
+    private int id;
 
 
     AckMessage(Address self, int reqId) {

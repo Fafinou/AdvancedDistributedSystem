@@ -1,5 +1,6 @@
 package se.kth.ict.id2203.riwcport.riwc;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -64,7 +65,8 @@ public class RIWC extends ComponentDefinition {
             /*
              * initialize register 0 
              */
-            writeSet = null;
+            writeSet = new HashSet<Address>();
+            writeSet.clear();
             reading = false;
             reqId = 0;
             readVal = 0;
@@ -73,29 +75,25 @@ public class RIWC extends ComponentDefinition {
             mrank = 0;
         }
     };
-    
-    public boolean include(Set<Address> set1, Set<Address> set2){
-        
+
+    public boolean include(Set<Address> set1, Set<Address> set2) {
+
         Iterator<Address> iter = set1.iterator();
         while (iter.hasNext()) {
             Address address = iter.next();
-            if(!set2.contains(address)){
+            if (!set2.contains(address)) {
                 return false;
             }
         }
         return true;
     }
-    
     Handler<Crash> handleCrash = new Handler<Crash>() {
-
         @Override
         public void handle(Crash e) {
             correct.remove(e.getWhoCrashed());
         }
     };
-    
     Handler<ReadRequest> handleReadRequest = new Handler<ReadRequest>() {
-
         @Override
         public void handle(ReadRequest e) {
             reqId = reqId + 1;
@@ -105,22 +103,18 @@ public class RIWC extends ComponentDefinition {
             trigger(new BebBroadcast(new WriteMessage(reqId, ts, mrank, v, self)), beb);
         }
     };
-    
     Handler<WriteRequest> handleWriteRequest = new Handler<WriteRequest>() {
-
         @Override
         public void handle(WriteRequest e) {
             reqId = reqId + 1;
             writeSet.clear();
-            trigger(new BebBroadcast(new WriteMessage(reqId, ts+1, i, e.getVal(), self)), beb);
+            trigger(new BebBroadcast(new WriteMessage(reqId, ts + 1, i, e.getVal(), self)), beb);
         }
     };
-    
     Handler<WriteMessage> handleBebDeliver = new Handler<WriteMessage>() {
-
         @Override
         public void handle(WriteMessage e) {
-            if((e.getTs() > ts) && (e.getMrank() > mrank)){
+            if ((e.getTs() > ts) && (e.getMrank() > mrank)) {
                 v = e.getV();
                 ts = e.getTs();
                 mrank = e.getMrank();
@@ -128,27 +122,26 @@ public class RIWC extends ComponentDefinition {
             trigger(new Pp2pSend(self, new AckMessage(self, e.getReqId())), pp2p);
         }
     };
-    
     Handler<AckMessage> handleAckMessage = new Handler<AckMessage>() {
-
         @Override
         public void handle(AckMessage e) {
-            if(e.getId() == reqId){
+            if (e.getId() == reqId) {
                 writeSet.add(e.getSource());
                 checkCorrectSet();
             }
         }
+    };
 
-        private void checkCorrectSet() {
-            while(include(correct, writeSet)){
-                if(reading){
-                    reading = false;
-                    trigger(new ReadResponse(readVal), ar);
-                }else{
-                    trigger(new WriteResponse(), ar);
-                }
+    private void checkCorrectSet() {
+        while (include(correct, writeSet)) {
+            if (reading) {
+                reading = false;
+                logger.info("send a read response");
+                trigger(new ReadResponse(readVal), ar);
+            } else {
+                logger.info("send a write response");
+                trigger(new WriteResponse(), ar);
             }
         }
-    };
-    
+    }
 }

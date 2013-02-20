@@ -152,9 +152,10 @@ public class RIWCM extends ComponentDefinition {
  
 
      private void checkReadSet() {
-        
+        TimeStampedValue value = null;
+        value = highest(readSet);
         if( readSet.size() > N/2) {
-            //missing line 7 -((t, rk), v) := highest(readSet[r]);
+            
             readVal=v;
             if (reading) {
                trigger(new BebBroadcast(new WriteMessage(reqId, ts, mrank, v, self)), beb);
@@ -187,7 +188,9 @@ Handler<AckMessage> handleAckMessage = new Handler<AckMessage>() {
                 checkWriteSet();               
         }       
     }
+   };
 
+  
      private void checkWriteSet() {
         
         if( readSet.size() > N/2) {
@@ -199,6 +202,4 @@ Handler<AckMessage> handleAckMessage = new Handler<AckMessage>() {
             }
         }
      }
-   };
 }
-  

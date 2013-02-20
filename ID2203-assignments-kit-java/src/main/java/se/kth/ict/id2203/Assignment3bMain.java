@@ -82,7 +82,7 @@ public class Assignment3bMain extends ComponentDefinition {
         trigger(new DelayLinkInit(topology), pp2p.control());
         trigger(new Application3aInit(commandScript, neighborSet, self), app
                 .control());
-        trigger(new RIWCMInit(topology), riwcm.control());
+        trigger(new RIWCMInit(topology, 42), riwcm.control());
         trigger(new BasicBcastInit(topology), beb.control());
     
     // connect the components

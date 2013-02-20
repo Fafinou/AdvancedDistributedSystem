@@ -83,7 +83,7 @@ public class Application3a extends ComponentDefinition{
 
         @Override
         public void handle(WriteResponse e) {
-            logger.info("Writing completed");
+            logger.info("Writing completed on register " + e.getReg());
             blocking = false;
         }
     };
@@ -92,7 +92,7 @@ public class Application3a extends ComponentDefinition{
 
         @Override
         public void handle(ReadResponse e) {
-            logger.info("Read value: " + e.getVal());
+            logger.info("Read value: " + e.getVal()+" On register "+e.getReg());
             blocking = false;
         }
     };

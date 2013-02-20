@@ -13,7 +13,7 @@ public class AckMessage extends Pp2pDeliver {
     
 
     
-    AckMessage(Address self, int reqId, int reg) {
+    public AckMessage(Address self, int reqId, int reg) {
         super(self);
         this.id = reqId;
         this.reg = reg;

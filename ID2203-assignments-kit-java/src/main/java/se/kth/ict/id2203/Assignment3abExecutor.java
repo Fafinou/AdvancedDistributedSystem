@@ -25,7 +25,7 @@ public class Assignment3abExecutor {
             }
         };
        
-       Topology topologyEx2 = new Topology() {};
+       Topology topologyEx2 = new Topology() {}
         
         
         Scenario scenario3a = new Scenario(Assignment3aMain.class){

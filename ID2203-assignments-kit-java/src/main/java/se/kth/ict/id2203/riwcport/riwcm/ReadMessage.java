@@ -7,14 +7,22 @@ import se.sics.kompics.address.Address;
  *
  * @author ALEX & fingolfin
  */
-public class ReadMessage extends BebDeliver  {
+public class ReadMessage extends BebDeliver {
+
+    private int reg;
     private int reqId;
-    
-    public ReadMessage(int reqId, Address source) {
+
+    public ReadMessage(int reg, int reqId, Address source) {
         super(source);
+        this.reg = reg;
         this.reqId = reqId;
-    }  
-        public int getReqId() {
+    }
+
+    public int getReg() {
+        return reg;
+    }
+
+    public int getReqId() {
         return reqId;
     }
 }

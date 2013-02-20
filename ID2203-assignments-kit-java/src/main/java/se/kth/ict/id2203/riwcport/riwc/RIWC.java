@@ -115,13 +115,13 @@ public class RIWC extends ComponentDefinition {
             readVal[reg] = v[reg];
             logger.info("sending a write message after read request");
             trigger(new BebBroadcast(
-                        new WriteMessage(
-                            reg,
-                            reqId[reg],
-                            ts[reg],
-                            mrank[reg],
-                            v[reg],
-                            self)),
+                    new WriteMessage(
+                    reg,
+                    reqId[reg],
+                    ts[reg],
+                    mrank[reg],
+                    v[reg],
+                    self)),
                     beb);
         }
     };
@@ -132,13 +132,13 @@ public class RIWC extends ComponentDefinition {
             reqId[reg] = reqId[reg] + 1;
             writeSet[reg].clear();
             trigger(new BebBroadcast(
-                        new WriteMessage(
-                            reg,
-                            reqId[reg],
-                            ts[reg] + 1,
-                            i,
-                            e.getVal(),
-                            self)),
+                    new WriteMessage(
+                    reg,
+                    reqId[reg],
+                    ts[reg] + 1,
+                    i,
+                    e.getVal(),
+                    self)),
                     beb);
         }
     };
@@ -146,7 +146,7 @@ public class RIWC extends ComponentDefinition {
         @Override
         public void handle(WriteMessage e) {
             int reg = e.getReg();
-            if ((e.getTs() > ts[reg]) && (e.getMrank() > mrank[reg])) {
+            if(compareTimeStamp(e.getTs(), e.getMrank(), ts[reg], mrank[reg])){
                 v[reg] = e.getV();
                 ts[reg] = e.getTs();
                 mrank[reg] = e.getMrank();
@@ -160,20 +160,35 @@ public class RIWC extends ComponentDefinition {
             int reg = e.getReg();
             if (e.getId() == reqId[reg]) {
                 writeSet[reg].add(e.getSource());
-                checkCorrectSet(reg);
+                checkCorrectSet();
             }
         }
     };
 
-    private void checkCorrectSet(int reg) {
-
-        if (include(correct, writeSet[reg])) {
-            if (reading[reg]) {
-                reading[reg] = false;
-                trigger(new ReadResponse(readVal[reg]), ar);
-            } else {
-                trigger(new WriteResponse(), ar);
+    private void checkCorrectSet() {
+        for (int j = 0; j < nbRegister; j++) {
+            if (include(correct, writeSet[j])) {
+                if (reading[j]) {
+                    reading[j] = false;
+                    trigger(new ReadResponse(j,readVal[j]), ar);
+                } else {
+                    trigger(new WriteResponse(j), ar);
+                }
             }
         }
+    }
+    
+        /**
+     * returns true iff (ts1,rk1) > (ts2,rk2)
+     */
+    private boolean compareTimeStamp(int ts1, int rk1, int ts2, int rk2) {
+        if (ts1 > ts2) {
+            return true;
+        } else if (ts1 == ts2) {
+            if (rk1 > rk2) {
+                return true;
+            }
+        }
+        return false;
     }
 }

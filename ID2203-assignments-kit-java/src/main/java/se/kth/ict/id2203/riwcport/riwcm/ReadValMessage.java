@@ -9,18 +9,26 @@ import se.sics.kompics.address.Address;
  */
 public class ReadValMessage extends Pp2pDeliver {
 
+    private int reg;
     private final int id;
     private int ts;
     private int mrank;
     private int val;
 
-    public ReadValMessage(int id, int ts, int mrank, int val, Address source) {
+    public ReadValMessage(int reg, int id, int ts, int mrank, int val, Address source) {
         super(source);
+        this.reg = reg;
         this.id = id;
         this.ts = ts;
         this.mrank = mrank;
         this.val = val;
     }
+
+    public int getReg() {
+        return reg;
+    }
+
+    
 
     public int getMrank() {
         return mrank;

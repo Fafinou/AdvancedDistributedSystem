@@ -152,7 +152,8 @@ public class RIWCM extends ComponentDefinition {
  
 
      private void checkReadSet() {
-        
+        TimeStampedValue value = null;
+        value = highest(readSet);
         if( readSet.size() > N/2) {
             
             readVal=v;
@@ -187,7 +188,9 @@ Handler<AckMessage> handleAckMessage = new Handler<AckMessage>() {
                 checkWriteSet();               
         }       
     }
+   };
 
+  
      private void checkWriteSet() {
         
         if( readSet.size() > N/2) {
@@ -199,6 +202,4 @@ Handler<AckMessage> handleAckMessage = new Handler<AckMessage>() {
             }
         }
      }
-   };
 }
-  

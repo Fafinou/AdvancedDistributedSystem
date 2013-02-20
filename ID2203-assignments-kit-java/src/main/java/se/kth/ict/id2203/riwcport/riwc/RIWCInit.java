@@ -9,12 +9,20 @@ import se.sics.kompics.launch.Topology;
  */
 public class RIWCInit extends Init{
     private Topology topology;
+    private int nbRegister;
     
     public Topology getTopology() {
         return topology;
     }
 
-    public RIWCInit(Topology topology) {
+    public RIWCInit(Topology topology, int nbRegister) {
         this.topology = topology;
-}
+        this.nbRegister = nbRegister;
+    }
+
+    public int getNbRegister() {
+        return nbRegister;
+    }
+
+    
 }

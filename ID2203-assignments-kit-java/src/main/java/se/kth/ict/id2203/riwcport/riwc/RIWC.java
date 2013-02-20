@@ -46,16 +46,17 @@ public class RIWC extends ComponentDefinition {
         subscribe(handleBebDeliver, beb);
         subscribe(handleAckMessage, pp2p);
     }
+    private int nbRegister;
     private Set<Address> correct = null;
     private Address self = null;
     private int i;
-    private Set<Address> writeSet = null;
-    private boolean reading;
-    private int reqId;
-    private int readVal;
-    private int v;
-    private int ts;
-    private int mrank;
+    private Set<Address>[] writeSet = null;
+    private boolean[] reading;
+    private int[] reqId;
+    private int[] readVal;
+    private int[] v;
+    private int[] ts;
+    private int[] mrank;
     /*Handlers*/
     Handler<RIWCInit> handleInit = new Handler<RIWCInit>() {
         @Override
@@ -63,17 +64,27 @@ public class RIWC extends ComponentDefinition {
             self = e.getTopology().getSelfAddress();
             correct = e.getTopology().getAllAddresses();
             i = self.getId();
+            nbRegister = e.getNbRegister();
             /*
              * initialize register 0 
              */
-            writeSet = new HashSet<Address>();
-            writeSet.clear();
-            reading = false;
-            reqId = 0;
-            readVal = 0;
-            v = 0;
-            ts = 0;
-            mrank = 0;
+            writeSet = new Set[nbRegister];
+            reading = new boolean[nbRegister];
+            reqId = new int[nbRegister];
+            readVal = new int[nbRegister];
+            v = new int[nbRegister];
+            ts = new int[nbRegister];
+            mrank = new int[nbRegister];
+            for (int j = 0; j < nbRegister; j++) {
+                writeSet[j] = new HashSet<Address>();
+                writeSet[j].clear();
+                reading[j] = false;
+                reqId[j] = 0;
+                readVal[j] = 0;
+                v[j] = 0;
+                ts[j] = 0;
+                mrank[j] = 0;
+            }
         }
     };
 
@@ -97,49 +108,69 @@ public class RIWC extends ComponentDefinition {
     Handler<ReadRequest> handleReadRequest = new Handler<ReadRequest>() {
         @Override
         public void handle(ReadRequest e) {
-            reqId = reqId + 1;
-            reading = true;
-            writeSet.clear();
-            readVal = v;
+            int reg = e.getReg();
+            reqId[reg] = reqId[reg] + 1;
+            reading[reg] = true;
+            writeSet[reg].clear();
+            readVal[reg] = v[reg];
             logger.info("sending a write message after read request");
-            trigger(new BebBroadcast(new WriteMessage(reqId, ts, mrank, v, self)), beb);
+            trigger(new BebBroadcast(
+                        new WriteMessage(
+                            reg,
+                            reqId[reg],
+                            ts[reg],
+                            mrank[reg],
+                            v[reg],
+                            self)),
+                    beb);
         }
     };
     Handler<WriteRequest> handleWriteRequest = new Handler<WriteRequest>() {
         @Override
         public void handle(WriteRequest e) {
-            reqId = reqId + 1;
-            writeSet.clear();
-            trigger(new BebBroadcast(new WriteMessage(reqId, ts + 1, i, e.getVal(), self)), beb);
+            int reg = e.getReg();
+            reqId[reg] = reqId[reg] + 1;
+            writeSet[reg].clear();
+            trigger(new BebBroadcast(
+                        new WriteMessage(
+                            reg,
+                            reqId[reg],
+                            ts[reg] + 1,
+                            i,
+                            e.getVal(),
+                            self)),
+                    beb);
         }
     };
     Handler<WriteMessage> handleBebDeliver = new Handler<WriteMessage>() {
         @Override
         public void handle(WriteMessage e) {
-            if ((e.getTs() > ts) && (e.getMrank() > mrank)) {
-                v = e.getV();
-                ts = e.getTs();
-                mrank = e.getMrank();
+            int reg = e.getReg();
+            if ((e.getTs() > ts[reg]) && (e.getMrank() > mrank[reg])) {
+                v[reg] = e.getV();
+                ts[reg] = e.getTs();
+                mrank[reg] = e.getMrank();
             }
-            trigger(new Pp2pSend(e.getSource(), new AckMessage(self, e.getReqId())), pp2p);
+            trigger(new Pp2pSend(e.getSource(), new AckMessage(self, e.getReqId(), reg)), pp2p);
         }
     };
     Handler<AckMessage> handleAckMessage = new Handler<AckMessage>() {
         @Override
         public void handle(AckMessage e) {
-            if (e.getId() == reqId) {
-                writeSet.add(e.getSource());
-                checkCorrectSet();
+            int reg = e.getReg();
+            if (e.getId() == reqId[reg]) {
+                writeSet[reg].add(e.getSource());
+                checkCorrectSet(reg);
             }
         }
     };
 
-    private void checkCorrectSet() {
-        
-        if(include(correct, writeSet)) {
-            if (reading) {
-                reading = false;
-                trigger(new ReadResponse(readVal), ar);
+    private void checkCorrectSet(int reg) {
+
+        if (include(correct, writeSet[reg])) {
+            if (reading[reg]) {
+                reading[reg] = false;
+                trigger(new ReadResponse(readVal[reg]), ar);
             } else {
                 trigger(new WriteResponse(), ar);
             }

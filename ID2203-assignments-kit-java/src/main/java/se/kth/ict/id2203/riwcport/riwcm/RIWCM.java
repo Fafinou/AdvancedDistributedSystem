@@ -5,10 +5,9 @@ import java.util.Iterator;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.ict.id2203.application.Application3b;
+import se.kth.ict.id2203.application.Application3a;
 import se.kth.ict.id2203.bebport.BEB;
 import se.kth.ict.id2203.bebport.BebBroadcast;
-import se.kth.ict.id2203.pfdp.Crash;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.Pp2pSend;
 import se.kth.ict.id2203.riwcport.AtomicRegister;
@@ -32,7 +31,7 @@ public class RIWCM extends ComponentDefinition {
     Positive<BEB> beb = requires(BEB.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
     private static final Logger logger =
-            LoggerFactory.getLogger(Application3b.class);
+            LoggerFactory.getLogger(Application3a.class);
 
     public RIWCM() {
         /*subscribe(eachHandler, respective port);*/

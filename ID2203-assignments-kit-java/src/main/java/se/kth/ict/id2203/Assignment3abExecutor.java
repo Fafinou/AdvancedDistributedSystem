@@ -126,9 +126,9 @@ public class Assignment3abExecutor {
             }
         };
 
-            scenarioEx1a.executeOn(topologyEx12);
+            //scenarioEx1a.executeOn(topologyEx12);
             //scenarioEx1b.executeOn(topologyEx12);
-            //scenarioEx2.executeOn(topologyEx12);
+            scenarioEx2.executeOn(topologyEx12);
             
             //scenario123.executeOn(topologyEx3);
             //scenario132.executeOn(topologyEx3);

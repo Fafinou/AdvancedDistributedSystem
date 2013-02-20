@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.application.Application3a;
 import se.kth.ict.id2203.bebport.BEB;
 import se.kth.ict.id2203.bebport.BebBroadcast;
+import se.kth.ict.id2203.bebport.beb.BeBMessage;
 import se.kth.ict.id2203.pfdp.Crash;
 import se.kth.ict.id2203.pfdp.PerfectFailureDetector;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
@@ -60,7 +61,7 @@ public class RIWC extends ComponentDefinition {
         @Override
         public void handle(RIWCInit e) {
             self = e.getTopology().getSelfAddress();
-            correct = e.getTopology().getNeighbors(self);
+            correct = e.getTopology().getAllAddresses();
             i = self.getId();
             /*
              * initialize register 0 
@@ -100,6 +101,7 @@ public class RIWC extends ComponentDefinition {
             reading = true;
             writeSet.clear();
             readVal = v;
+            logger.info("sending a write message after read request");
             trigger(new BebBroadcast(new WriteMessage(reqId, ts, mrank, v, self)), beb);
         }
     };
@@ -119,7 +121,7 @@ public class RIWC extends ComponentDefinition {
                 ts = e.getTs();
                 mrank = e.getMrank();
             }
-            trigger(new Pp2pSend(self, new AckMessage(self, e.getReqId())), pp2p);
+            trigger(new Pp2pSend(e.getSource(), new AckMessage(self, e.getReqId())), pp2p);
         }
     };
     Handler<AckMessage> handleAckMessage = new Handler<AckMessage>() {
@@ -133,13 +135,12 @@ public class RIWC extends ComponentDefinition {
     };
 
     private void checkCorrectSet() {
-        while (include(correct, writeSet)) {
+        
+        if(include(correct, writeSet)) {
             if (reading) {
                 reading = false;
-                logger.info("send a read response");
                 trigger(new ReadResponse(readVal), ar);
             } else {
-                logger.info("send a write response");
                 trigger(new WriteResponse(), ar);
             }
         }

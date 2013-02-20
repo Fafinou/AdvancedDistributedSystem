@@ -1,5 +1,6 @@
 package se.kth.ict.id2203.bebport;
 
+import se.kth.ict.id2203.bebport.beb.BeBMessage;
 import se.kth.ict.id2203.riwcport.riwc.WriteMessage;
 import se.sics.kompics.Event;
 
@@ -9,14 +10,14 @@ import se.sics.kompics.Event;
  */
 public class BebBroadcast extends Event{
 
-    private WriteMessage msg;
+    private BebDeliver msg;
 
 
-    public BebBroadcast(WriteMessage writeMessage) {
-        msg = writeMessage;
+    public BebBroadcast(BebDeliver msg) {
+        this.msg = msg;
     }
 
-    public WriteMessage getMsg() {
+    public BebDeliver getMsg() {
         return msg;
     }
     

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.application.Application2;
 import se.kth.ict.id2203.bebport.BEB;
 import se.kth.ict.id2203.bebport.BebBroadcast;
+import se.kth.ict.id2203.bebport.BebDeliver;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.Pp2pSend;
 import se.sics.kompics.ComponentDefinition;
@@ -47,10 +48,10 @@ public class BasicBcast extends ComponentDefinition{
         @Override
         public void handle(BebBroadcast e) {
             Iterator<Address> iterNodes = allNodes.iterator();
-            BeBMessage toSend = new BeBMessage(self,e.getMsg());
+            BebDeliver toSend = e.getMsg();
             while (iterNodes.hasNext()) {
                 Address address = iterNodes.next();
-                trigger(new Pp2pSend(address, toSend),pp2p);
+                trigger(new Pp2pSend(address,new BeBMessage(self, toSend)),pp2p);
             }
         }
     };

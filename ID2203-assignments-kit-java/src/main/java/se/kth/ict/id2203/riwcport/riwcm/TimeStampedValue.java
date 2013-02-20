@@ -6,12 +6,12 @@ import se.sics.kompics.address.Address;
  *
  * @author ALEX
  */
-public class ReadSet {
+public class TimeStampedValue {
  private int t;
     private int rk;
     private int val;
 
-    public ReadSet(int t, int rk, int val) {   
+    public TimeStampedValue(int t, int rk, int val) {   
         this.t = t;
         this.rk = rk;
         this.val = val;

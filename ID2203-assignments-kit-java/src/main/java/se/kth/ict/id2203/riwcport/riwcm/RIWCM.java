@@ -48,7 +48,7 @@ public class RIWCM extends ComponentDefinition {
     private Address self = null;
     private int i;
     private Set<Address> writeSet = null;
-    private Set<ReadSet> readSet = null;
+    private Set<TimeStampedValue> readSet = null;
     private boolean reading;
     private int reqId;
     private int writeVal;
@@ -73,7 +73,7 @@ public class RIWCM extends ComponentDefinition {
             
             writeSet = new HashSet <Address>();
             writeSet = null;
-            readSet = new HashSet<ReadSet>();
+            readSet = new HashSet<TimeStampedValue>();
             readSet= null;
             reading = false;
             reqId = 0;
@@ -96,17 +96,19 @@ public class RIWCM extends ComponentDefinition {
         return true;
     }
     
-    public boolean highest(Set<ReadSet> readset1, Set<ReadSet> readset2){
+    public TimeStampedValue highest(Set<TimeStampedValue> readset1){
+        TimeStampedValue maxValue = null;
         
-//        Iterator<ReadSet> iterate = readset1.iterator();
-//        while (iterat.hasNext()) {
-//            ReadSet readSet = iterat.next();
-//            if(!readset2.contains(readSet)){
-//                return ;
+        Iterator<TimeStampedValue> iterate = readset1.iterator();
+        while (iterate.hasNext()) {
+            TimeStampedValue value = iterate.next();
+            
+//                return true;
 //            }
-//        }
-//        return ;
+        }
+        return maxValue ;
     }
+    
     
     Handler<ReadRequest> handleReadRequest = new Handler<ReadRequest>() {
 
@@ -150,7 +152,7 @@ public class RIWCM extends ComponentDefinition {
  @Override
         public void handle(ReadValMessage e) {
                 if(e.getId() == reqId){
-                readSet.add(new ReadSet(e.getTs(), e.getMrank(), e.getVal()));    
+                readSet.add(new TimeStampedValue(e.getTs(), e.getMrank(), e.getVal()));    
                 checkReadSet();
                 //algorithm   readSet[r] := readSet[r] ∪ {((t, rk), val)};
                 }            

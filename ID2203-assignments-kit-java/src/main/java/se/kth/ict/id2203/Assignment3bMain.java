@@ -2,8 +2,8 @@ package se.kth.ict.id2203;
 
 import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
-import se.kth.ict.id2203.application.Application3b;
-import se.kth.ict.id2203.application.Application3bInit;
+import se.kth.ict.id2203.application.Application3a;
+import se.kth.ict.id2203.application.Application3aInit;
 import se.kth.ict.id2203.bebport.BEB;
 import se.kth.ict.id2203.bebport.beb.BasicBcast;
 import se.kth.ict.id2203.bebport.beb.BasicBcastInit;
@@ -62,7 +62,7 @@ public class Assignment3bMain extends ComponentDefinition {
         Component con = create(JavaConsole.class);
         Component pp2p = create(DelayLink.class);
         Component riwcm = create(RIWCM.class);
-        Component app = create(Application3b.class);    
+        Component app = create(Application3a.class);    
         Component beb = create(BasicBcast.class); 
 
         // handle possible faults in the components
@@ -80,7 +80,7 @@ public class Assignment3bMain extends ComponentDefinition {
     // initialize the components
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayLinkInit(topology), pp2p.control());
-        trigger(new Application3bInit(commandScript, neighborSet, self), app
+        trigger(new Application3aInit(commandScript, neighborSet, self), app
                 .control());
         trigger(new RIWCMInit(topology), riwcm.control());
         trigger(new BasicBcastInit(topology), beb.control());

@@ -150,13 +150,13 @@ public class Application3a extends ComponentDefinition{
     }
 
     private void doWrite(int parseInt) {
-        logger.info("Trying to write the message "+ parseInt);
+        logger.info("Process " + self.getId() + " Trying to write the message "+ parseInt);
         trigger(new WriteRequest(0,parseInt), ar);
         blocking = true;
     }
 
     private void doRead() {
-        logger.info("Trying to read...");
+        logger.info("Process "+self.getId()+" reading...");
         trigger(new ReadRequest(0), ar);
         blocking = true;
     }

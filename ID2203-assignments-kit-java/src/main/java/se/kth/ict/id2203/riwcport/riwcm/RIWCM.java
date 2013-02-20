@@ -213,6 +213,5 @@ public class RIWCM extends ComponentDefinition {
                 trigger(new BebBroadcast(new WriteMessage(j, reqId[j], value.getT() + 1, i, writeVal[j], self)), beb);
             }
         }
-
     }
 }

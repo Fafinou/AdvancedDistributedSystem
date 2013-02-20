@@ -26,7 +26,7 @@ public class Assignment3abExecutor {
         };
         
         
-        Scenario scenario3 = new Scenario(Assignment3aMain.class){
+        Scenario scenario3a = new Scenario(Assignment3aMain.class){
             {
                 command(1, "D30000");
                 command(2, "D500:W4:D25000", 100);
@@ -34,7 +34,13 @@ public class Assignment3abExecutor {
             }
         };
 
-
+        Scenario scenario3b = new Scenario(Assignment3bMain.class){
+            {
+                command(1, "D30000");
+                command(2, "D500:W4:D25000", 100);
+                command(3, "D10000:R", 200);
+            }
+        };
         Scenario scenario1 = new Scenario(Assignment2Main.class) {
             {
                 for (int i = 1; i <= 10; i++) {
@@ -58,7 +64,8 @@ public class Assignment3abExecutor {
 
         //scenarioPfd.executeOn(topology2);
         //scenario1.executeOn(topology2);
-        scenario3.executeOn(topologyEx3);
+        scenario3a.executeOn(topologyEx3);
+        //scenario3b.executeOn(topologyEx3);
         //scenario1.executeOn(topology2);
         // scenario2.executeOn(topology1);
         // scenario2.executeOn(topology2);

@@ -8,17 +8,25 @@ import se.sics.kompics.address.Address;
  * @author ALEX & fingolfin
  */
 public class AckMessage extends Pp2pDeliver {
+    private int reg;
     private int id;
+    
 
-
-    public AckMessage(Address self, int reqId) {
+    
+    AckMessage(Address self, int reqId, int reg) {
         super(self);
         this.id = reqId;
+        this.reg = reg;
     }
 
     public int getId() {
         return id;
     }
+
+    public int getReg() {
+        return reg;
+    }
+    
     
     
     

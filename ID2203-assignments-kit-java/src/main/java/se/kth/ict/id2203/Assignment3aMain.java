@@ -89,7 +89,7 @@ public class Assignment3aMain extends ComponentDefinition {
                 .control());
         trigger(new PfdInit(topology, 1000, 1001),
                 pfd.control());
-        trigger(new RIWCInit(topology), riwc.control());
+        trigger(new RIWCInit(topology, 42), riwc.control());
         trigger(new BasicBcastInit(topology), beb.control());
     
     // connect the components

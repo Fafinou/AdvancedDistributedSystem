@@ -9,18 +9,25 @@ import se.sics.kompics.address.Address;
  */
 public class WriteMessage extends BebDeliver {
 
+    private int reg;
     private int reqId;
     private int ts;
     private int mrank;
     private int v;
 
-    public WriteMessage(int reqId, int ts, int mrank, int v, Address source) {
+    public WriteMessage(int reg, int reqId, int ts, int mrank, int v, Address source) {
         super(source);
+        this.reg = reg;
         this.reqId = reqId;
         this.ts = ts;
         this.mrank = mrank;
         this.v = v;
     }
+
+    public int getReg() {
+        return reg;
+    }
+
 
     public int getMrank() {
         return mrank;

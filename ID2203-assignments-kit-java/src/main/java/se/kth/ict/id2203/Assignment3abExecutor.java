@@ -17,9 +17,9 @@ public class Assignment3abExecutor {
 
        Topology topologyEx3 = new Topology() {
             {
-                node(1, "127.0.0.1", 22031);
-                node(2, "127.0.0.1", 22032);
-                node(3, "127.0.0.1", 22033);
+                node(1, "127.0.0.1", 22033);
+                node(2, "127.0.0.1", 22034);
+                node(3, "127.0.0.1", 22035);
                 
                 defaultLinks(1000, 0);
             }

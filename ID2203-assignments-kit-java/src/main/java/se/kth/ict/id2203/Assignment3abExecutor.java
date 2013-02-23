@@ -42,7 +42,7 @@ public class Assignment3abExecutor {
                 node(1, "127.0.0.1", 22031);
                 node(2, "127.0.0.1", 22032);
                 node(3, "127.0.0.1", 22033);
-                link(1, 2, 1000, 0).bidirectional();
+                link(1, 2, 2000, 0).bidirectional();
                 link(1, 3, 2000, 0).bidirectional();
                 link(2, 3, 1750, 0).bidirectional();
             }
@@ -87,8 +87,8 @@ public class Assignment3abExecutor {
         Scenario scenario132 = new Scenario(Assignment3bMain.class) {
             {
                 command(1, "D500:W1:R:D500:R:D800");
-                command(3, "D500:W3:R:D500:R:D800", 100);
-                command(2, "D500:W2:R:D500:R:D800", 200);
+                command(3, "D10000:W3:R:D500:R:D800", 100);
+                command(2, "D10000:W2:R:D500:R:D800", 200);
             }
         };
 
@@ -128,9 +128,9 @@ public class Assignment3abExecutor {
 
             //scenarioEx1a.executeOn(topologyEx12);
             //scenarioEx1b.executeOn(topologyEx12);
-            scenarioEx2.executeOn(topologyEx12);
+            //scenarioEx2.executeOn(topologyEx12);
             
-            //scenario123.executeOn(topologyEx3);
+            scenario123.executeOn(topologyEx3);
             //scenario132.executeOn(topologyEx3);
             //scenario213.executeOn(topologyEx3);
             //scenario231.executeOn(topologyEx3);

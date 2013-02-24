@@ -9,7 +9,7 @@ import se.sics.kompics.address.Address;
 
 /**
  *
- * @author fingolfin
+ * @author ALEX & fingolfin
  */
 public class Trust extends Event {
     private final Address leader;

@@ -8,9 +8,22 @@ import se.sics.kompics.address.Address;
  * @author ALEX & fingolfin
  */
 public class Read extends BebDeliver{
+    private final int id;
+    private final Integer tstamp;
 
-    public Read(Address source) {
-        super(source);
+    public Read(Address self, int id, Integer tstamp) {
+        super(self);
+        this.id = id;
+        this.tstamp = tstamp;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public Integer getTstamp() {
+        return tstamp;
+    }
+    
     
 }

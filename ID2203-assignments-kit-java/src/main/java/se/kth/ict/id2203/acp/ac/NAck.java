@@ -12,9 +12,16 @@ import se.sics.kompics.address.Address;
  * @author fingolfin
  */
 public class NAck extends Pp2pDeliver {
+    private final int id;
 
-    public NAck(Address source) {
-        super(source);
+    public NAck(Address self, int id) {
+        super(self);
+        this.id = id;
     }
+
+    public int getId() {
+        return id;
+    }
+    
     
 }

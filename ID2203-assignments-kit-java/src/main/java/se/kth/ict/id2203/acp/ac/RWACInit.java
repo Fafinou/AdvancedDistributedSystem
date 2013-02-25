@@ -15,6 +15,7 @@ import se.sics.kompics.launch.Topology;
 public class RWACInit extends Init {
       
     private Topology topology;
+    private int maxInstance;
    
 
     public RWACInit(Topology topology) {
@@ -24,4 +25,8 @@ public class RWACInit extends Init {
     public Topology getTopology() {
         return topology;
     }  
+
+    int getMaxInstance() {
+      return this.maxInstance;
+    }
 }

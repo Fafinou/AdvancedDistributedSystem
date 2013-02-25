@@ -11,9 +11,9 @@ import se.sics.kompics.address.Address;
  *
  * @author fingolfin
  */
-public class Rack extends Pp2pDeliver {
+public class WAck extends Pp2pDeliver{
 
-    public Rack(Address source) {
+    public WAck(Address source) {
         super(source);
     }
     

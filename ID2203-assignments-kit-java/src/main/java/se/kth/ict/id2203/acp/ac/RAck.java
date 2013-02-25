@@ -11,9 +11,9 @@ import se.sics.kompics.address.Address;
  *
  * @author fingolfin
  */
-public class Nack extends Pp2pDeliver {
+public class RAck extends Pp2pDeliver {
 
-    public Nack(Address source) {
+    public RAck(Address source) {
         super(source);
     }
     

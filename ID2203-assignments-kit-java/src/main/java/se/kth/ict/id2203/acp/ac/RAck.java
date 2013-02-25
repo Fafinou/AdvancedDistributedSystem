@@ -12,9 +12,36 @@ import se.sics.kompics.address.Address;
  * @author fingolfin
  */
 public class RAck extends Pp2pDeliver {
+    private final int ts;
+    private final Integer val;
+    private final Integer wts;
+    private final int id;
 
-    public RAck(Address source) {
-        super(source);
+    RAck(Address self, int id, Integer wts, Integer val, int ts) {
+        super(self);
+        this.id = id;
+        this.wts = wts;
+        this.val = val;
+        this.ts = ts;
+        
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getTs() {
+        return ts;
+    }
+
+    public Integer getVal() {
+        return val;
+    }
+
+    public Integer getWts() {
+        return wts;
+    }
+    
+    
     
 }

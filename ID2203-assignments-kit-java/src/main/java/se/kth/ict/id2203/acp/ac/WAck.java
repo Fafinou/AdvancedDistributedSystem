@@ -12,9 +12,24 @@ import se.sics.kompics.address.Address;
  * @author fingolfin
  */
 public class WAck extends Pp2pDeliver{
+    private final int ts;
+    private final int id;
 
-    public WAck(Address source) {
-        super(source);
+    WAck(Address self, int id, int ts) {
+        super(self);
+        this.id = id;
+        this.ts = ts;
+        
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getTs() {
+        return ts;
+    }
+    
+    
     
 }

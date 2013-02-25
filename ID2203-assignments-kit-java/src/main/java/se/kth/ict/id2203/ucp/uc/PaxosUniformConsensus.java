@@ -17,6 +17,7 @@ import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
 import se.sics.kompics.Positive;
 import se.sics.kompics.address.Address;
+import se.kth.ict.id2203.ucp.uc.UcInit;
 
 /**
  *
@@ -44,6 +45,9 @@ public class PaxosUniformConsensus extends ComponentDefinition {
     private Set<Integer> seenIds = null;
     private boolean leader;
     private int id;
+    private int proposal[];
+    private int proposed[];
+    private int decided[];
     
     Handler<UcInit> handleInit = new Handler<UcInit>() {
         @Override
@@ -56,8 +60,13 @@ public class PaxosUniformConsensus extends ComponentDefinition {
     
     private void initInstance(int id) {
         if (!seenIds.contains(id)){
-            
-            
+                proposal = new int[id]; 
+                proposed = new int[id];
+                decided = new int[id];
+                proposal[id]=0;
+//                proposed[id]=false;
+//                decided[id]=false;
+//                seenIds[id].add(id);
             
 //            proposal[id]:= ⊥;
 //            proposed[id] := decided[id] := false;
@@ -70,6 +79,14 @@ public class PaxosUniformConsensus extends ComponentDefinition {
     Handler<Trust> handleTrust = new Handler<Trust>() {
         @Override
         public void handle(Trust e) {
+            if(self.equals(e.getSource())){
+                leader=true;
+            
+            
+            }
+            
+            
+            
             
         }
     };

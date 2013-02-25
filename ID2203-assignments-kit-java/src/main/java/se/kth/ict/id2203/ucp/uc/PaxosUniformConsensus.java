@@ -18,7 +18,6 @@ import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
 import se.sics.kompics.Positive;
 import se.sics.kompics.address.Address;
-import se.kth.ict.id2203.ucp.uc.UcInit;
 
 /**
  *
@@ -120,15 +119,15 @@ public class PaxosUniformConsensus extends ComponentDefinition {
             initInstance(id);
             if (decided[id]=false){
                 decided[id]=true;
-                //trigger(new unDecide, );           
+                trigger(new unDecide, );           
             }
         }
     };
 
     private void tryPropose(int id) {
-           //if(leader = true && proposed[id]=false && proposal[id] != null){
+           if(leader = true && proposed[id]=false && proposal[id] != null){
                 proposed[id]=true;
-                //trigger();
-            //}
+                trigger();
+            }
         }
     }

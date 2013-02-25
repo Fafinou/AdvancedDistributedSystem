@@ -2,6 +2,7 @@ package se.kth.ict.id2203.application;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -35,10 +36,12 @@ public class Application4 extends ComponentDefinition {
             LoggerFactory.getLogger(Application3a.class);
     private List<String> commands;
     private boolean blocking;
-    private int i;
-    private int j;
+    private int currWaitDelay;
     private Set<Address> neighborSet;
     private Address self;
+    private Integer[] decisions;
+    private Set<Integer> previousProposal;
+    private Set<Integer> currentProposal;
 
     /**
      * Instantiates a new application0.
@@ -49,12 +52,14 @@ public class Application4 extends ComponentDefinition {
         subscribe(handleContinue, timer);
         subscribe(handleConsoleInput, con);
         subscribe(handleUcDecide, uc);
-        subscribe(handleUcPropose, uc);
     }
     
     Handler<Application4Init> handleInit = new Handler<Application4Init>() {
         public void handle(Application4Init event) {
             neighborSet = event.getNeighborSet();
+            previousProposal = new HashSet<Integer>();
+            currentProposal = new HashSet<Integer>();
+            decisions = new Integer[event.getMaxInstance()];
             self = event.getSelf();
             commands = new ArrayList<String>(Arrays.asList(event.getCommandScript().split(":")));
             commands.add("$DONE");
@@ -83,17 +88,17 @@ public class Application4 extends ComponentDefinition {
     Handler<UcDecide> handleUcDecide = new Handler<UcDecide>() {
         @Override
         public void handle(UcDecide e) {
-//            logger.info("Writing completed on register " + e.getReg());
-//            blocking = false;
-//            doNextCommand();
-        }
-    };
-    Handler<UcPropose> handleUcPropose = new Handler<UcPropose>() {
-        @Override
-        public void handle(UcPropose e) {
-//            logger.info("Read value: " + e.getVal()+" On register "+e.getReg());
-//            blocking = false;
-//            doNextCommand();
+            int id = e.getId();
+            int val = e.getVal();
+            logger.info("received a decision from paxos: "+id);
+            previousProposal.remove(id);
+            currentProposal.remove(id);
+            decisions[id] = val;
+            if(blocking){
+                doDelay();
+            }else{
+                doNextCommand();
+            }
         }
     };
 
@@ -105,15 +110,15 @@ public class Application4 extends ComponentDefinition {
 
     private void doCommand(String cmd) {
         if (cmd.startsWith("D")) {
-            doSleep(Integer.parseInt(cmd.substring(1)));
+            currWaitDelay = Integer.parseInt(cmd.substring(1));
+            previousProposal = new HashSet<Integer>(currentProposal);
+            doDelay();
         }else if (cmd.startsWith("P")) {
-            doPropose(Integer.parseInt(cmd.substring(1), Integer.parseInt(cmd.substring(3))));
+            doPropose(Integer.parseInt(cmd.substring(1)),Integer.parseInt(cmd.substring(3)));
         } else if (cmd.startsWith("W")) {
-            doWrite(Integer.parseInt(cmd.substring(1)));
+            doWrite();
         } else if (cmd.startsWith("X")) {
             doShutdown();
-        } else if (cmd.startsWith("R")) {
-            doRead();
         } else if (cmd.equals("help")) {
             doHelp();
         } else if (cmd.equals("$DONE")) {
@@ -141,6 +146,14 @@ public class Application4 extends ComponentDefinition {
 
         blocking = true;
     }
+    
+    private void doDelay(){
+        if(!previousProposal.isEmpty()){
+            blocking = true;
+        }else{
+            doSleep(currWaitDelay);
+        }
+    }
 
     private void doShutdown() {
         System.out.println("2DIE");
@@ -151,21 +164,24 @@ public class Application4 extends ComponentDefinition {
     }
 
     
-    private void doPropose(int parseInt) {
-        logger.info("Process " + self.getId() + " proposed value " + parseInt);
-        trigger(new Uc(0, parseInt), uc);
-        blocking = true;
+    private void doPropose(Integer id, Integer val) {
+        logger.info("Process " + self.getId() + " proposed value " + val);
+        currentProposal.add(id);
+        trigger(new UcPropose(id, val), uc);
     }   
     
-    private void doWrite(int parseInt) {
-        logger.info("Process " + self.getId() + " Trying to write values " + parseInt);
-        trigger(new WriteRequest(0, parseInt), uc);
-        blocking = true;
-    }
-
+    
     private void doRead() {
         logger.info("Process " + self.getId() + " reading...");
         trigger(new ReadRequest(0), uc);
         blocking = true;
+    }
+
+    private void doWrite() {
+        logger.info("Displaying results...");
+        for (int i = 0; i < decisions.length; i++) {
+            Integer integer = decisions[i];
+            logger.info("paxos id: " + i + " ===> decides: "+ integer);
+        }
     }
 }

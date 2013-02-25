@@ -10,6 +10,11 @@ public class UcPropose extends Event{
     private int id;
     private int val;
 
+    public UcPropose(int id, int val) {
+        this.id = id;
+        this.val = val;
+    }
+    
     public int getId() {
         return this.id;
     }

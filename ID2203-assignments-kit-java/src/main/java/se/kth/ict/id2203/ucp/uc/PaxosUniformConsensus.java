@@ -1,23 +1,29 @@
 package se.kth.ict.id2203.ucp.uc;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.acp.AbortableConsensus;
+import se.kth.ict.id2203.acp.AcDecide;
 import se.kth.ict.id2203.application.Application4;
 import se.kth.ict.id2203.bebport.BEB;
 import se.kth.ict.id2203.eldport.EventualLeaderDetection;
 import se.kth.ict.id2203.eldport.Trust;
+import se.kth.ict.id2203.ucp.UcPropose;
 import se.kth.ict.id2203.ucp.UniformConsensus;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
 import se.sics.kompics.Positive;
+import se.sics.kompics.address.Address;
 
 /**
  *
  * @author ALEX & fingolfin
  */
-public class PaxosUniformConsensus extends ComponentDefinition{
+public class PaxosUniformConsensus extends ComponentDefinition {
+
     Negative<UniformConsensus> uc = provides(UniformConsensus.class);
     Positive<BEB> beb = requires(BEB.class);
     Positive<AbortableConsensus> ac = requires(AbortableConsensus.class);
@@ -28,47 +34,58 @@ public class PaxosUniformConsensus extends ComponentDefinition{
     public PaxosUniformConsensus() {
         /*subscribe(eachHandler, respective port);*/
         subscribe(handleInit, control);
-        //subscribe(handleTrust, eld);
-        //subscribe(handleDecided, beb);
-        //subscribe(handleWriteMessage, beb);
-        //subscribe(handleWriteMessage, beb);
+        subscribe(handleTrust, eld);
+        subscribe(handleUcPropose, uc);
+        subscribe(handleAcReturn, ac);
+        subscribe(handleDecided, beb);
     }
-  
+    
+    private Address self = null;
+    private Set<Integer> seenIds = null;
+    private boolean leader;
+    private int id;
     
     Handler<UcInit> handleInit = new Handler<UcInit>() {
         @Override
         public void handle(UcInit e) {
+            seenIds = new HashSet<Integer>();            
+            seenIds.clear();
+            leader=false;
         }
     };
     
-//    Handler<Trust> handleTrust = new HandlerTrust {
-//        @Override
-//        public void handle(Trust e) {
-//        }
-//    };    
-//    
-//    Handler<> handleUcPropose = new Handler<>() {
-//        @Override
-//        public void handle( e) {
-//        }
-//    };    
-//
-//    Handler<> handleTryPropose = new Handler<>() {
-//        @Override
-//        public void handle( e) {
-//        }
-//    }; 
-//    
-//    
-//    Handler<> handleAcReturn = new Handler<>() {
-//        @Override
-//        public void handle( e) {
-//        }
-//    }; 
-//    
-//        Handler<Decided> handleDecided = new Handler<Decided>() {
-//        @Override
-//        public void handle(Decided e) {
-//        }
-//    };
+    private void initInstance(int id) {
+        if (!seenIds.contains(id)){
+            
+            
+            
+//            proposal[id]:= ⊥;
+//            proposed[id] := decided[id] := false;
+//            seenIds := seenIds ∪ {id};
+        }
+        
+    }
+    
+    
+    Handler<Trust> handleTrust = new Handler<Trust>() {
+        @Override
+        public void handle(Trust e) {
+            
+        }
+    };
+    Handler<UcPropose> handleUcPropose = new Handler<UcPropose>() {
+        @Override
+        public void handle(UcPropose e) {
+        }
+    };
+    Handler<AcDecide> handleAcReturn = new Handler<AcDecide>() {
+        @Override
+        public void handle(AcDecide e) {
+        }
+    };
+    Handler<Decided> handleDecided = new Handler<Decided>() {
+        @Override
+        public void handle(Decided e) {
+        }
+    };
 }

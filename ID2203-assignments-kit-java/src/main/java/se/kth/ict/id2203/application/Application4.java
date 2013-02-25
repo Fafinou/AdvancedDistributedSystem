@@ -107,7 +107,7 @@ public class Application4 extends ComponentDefinition {
         if (cmd.startsWith("D")) {
             doSleep(Integer.parseInt(cmd.substring(1)));
         }else if (cmd.startsWith("P")) {
-            doPropose(Integer.parseInt(cmd.substring(1)));
+            doPropose(Integer.parseInt(cmd.substring(1), Integer.parseInt(cmd.substring(3))));
         } else if (cmd.startsWith("W")) {
             doWrite(Integer.parseInt(cmd.substring(1)));
         } else if (cmd.startsWith("X")) {

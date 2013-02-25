@@ -18,8 +18,9 @@ public class RWACInit extends Init {
     private int maxInstance;
    
 
-    public RWACInit(Topology topology) {
+    public RWACInit(Topology topology, int maxInstance) {
         this.topology = topology;
+        this.maxInstance = maxInstance;
     }
 
     public Topology getTopology() {

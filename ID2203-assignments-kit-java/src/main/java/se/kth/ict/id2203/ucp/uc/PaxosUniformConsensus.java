@@ -1,5 +1,7 @@
 package se.kth.ict.id2203.ucp.uc;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.acp.AbortableConsensus;
@@ -14,6 +16,7 @@ import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Negative;
 import se.sics.kompics.Positive;
+import se.sics.kompics.address.Address;
 
 /**
  *
@@ -36,14 +39,38 @@ public class PaxosUniformConsensus extends ComponentDefinition {
         subscribe(handleAcReturn, ac);
         subscribe(handleDecided, beb);
     }
+    
+    private Address self = null;
+    private Set<Integer> seenIds = null;
+    private boolean leader;
+    private int id;
+    
     Handler<UcInit> handleInit = new Handler<UcInit>() {
         @Override
         public void handle(UcInit e) {
+            seenIds = new HashSet<Integer>();            
+            seenIds.clear();
+            leader=false;
         }
     };
+    
+    private void initInstance(int id) {
+        if (!seenIds.contains(id)){
+            
+            
+            
+//            proposal[id]:= ⊥;
+//            proposed[id] := decided[id] := false;
+//            seenIds := seenIds ∪ {id};
+        }
+        
+    }
+    
+    
     Handler<Trust> handleTrust = new Handler<Trust>() {
         @Override
         public void handle(Trust e) {
+            
         }
     };
     Handler<UcPropose> handleUcPropose = new Handler<UcPropose>() {

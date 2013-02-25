@@ -8,7 +8,7 @@ import se.sics.kompics.PortType;
 
 /**
  *
- * @author fingolfin
+ * @author ALEX & fingolfin
  */
 public class EventualLeaderDetection extends PortType {
     {

@@ -86,14 +86,15 @@ public class Assignment4Main extends ComponentDefinition {
    
     
      Address self = topology.getSelfAddress();
+     int maxInstance  = 10;
         Set<Address> neighborSet = topology.getNeighbors(self);
     // initialize the components
         trigger(new MinaNetworkInit(self, 5), network.control());
         trigger(new DelayLinkInit(topology), pp2p.control());
-        trigger(new Application4Init(commandScript, neighborSet, self), app
+        trigger(new Application4Init(commandScript, neighborSet, self,maxInstance), app
                 .control());
-        trigger(new UcInit(topology, 42), uc.control());
-        trigger(new RWACInit(topology, 42), ac.control());
+        trigger(new UcInit(topology, maxInstance), uc.control());
+        trigger(new RWACInit(topology, maxInstance), ac.control());
         trigger(new BasicBcastInit(topology), beb.control());
         trigger(new ELDInit(topology, 1000), eld.control());
     

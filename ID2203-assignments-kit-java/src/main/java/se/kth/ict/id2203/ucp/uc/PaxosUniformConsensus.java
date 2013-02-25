@@ -50,21 +50,23 @@ public class PaxosUniformConsensus extends ComponentDefinition {
     private Integer proposal[];
     private boolean proposed[];
     private boolean decided[];
-    
-    
     Handler<UcInit> handleInit = new Handler<UcInit>() {
         @Override
         public void handle(UcInit e) {
             seenIds = new HashSet<Integer>();
             seenIds.clear();
+            self = e.getTopology().getSelfAddress();
             leader = false;
             maxInstance = e.getMaxInstance();
+            proposal = new Integer[maxInstance];
+            proposed = new boolean[maxInstance];
+            decided = new boolean[maxInstance];
         }
     };
 
     private void initInstance(int id) {
         if (!seenIds.contains(id)) {
-            proposal = new Integer[maxInstance];
+
             proposal[id] = null;
             proposed[id] = false;
             decided[id] = false;
@@ -86,7 +88,6 @@ public class PaxosUniformConsensus extends ComponentDefinition {
             }
         }
     };
-    
     Handler<UcPropose> handleUcPropose = new Handler<UcPropose>() {
         @Override
         public void handle(UcPropose e) {
@@ -102,8 +103,8 @@ public class PaxosUniformConsensus extends ComponentDefinition {
         public void handle(AcDecide e) {
             int id = e.getId();
             Integer result = e.getVal();
-            if (!result.equals(null)) {
-                trigger(new BebBroadcast(new Decided(self,id, result)),beb);
+            if (!(result == null)) {
+                trigger(new BebBroadcast(new Decided(self, id, result)), beb);
             } else {
                 proposed[id] = false;
                 tryPropose(id);
@@ -118,13 +119,14 @@ public class PaxosUniformConsensus extends ComponentDefinition {
             initInstance(id);
             if (!decided[id]) {
                 decided[id] = true;
-                trigger(new UcDecide(id, v),uc);
+                trigger(new UcDecide(id, v), uc);
             }
         }
     };
 
     private void tryPropose(int id) {
-        if (leader && !proposed[id] && !proposal[id].equals(null)) {
+
+        if (leader && !proposed[id] && !(proposal[id] == null)) {
             proposed[id] = true;
             trigger(new AcPropose(id, proposal[id]), ac);
         }

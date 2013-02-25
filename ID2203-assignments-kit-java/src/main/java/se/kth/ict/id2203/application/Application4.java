@@ -33,7 +33,7 @@ public class Application4 extends ComponentDefinition {
     Positive<UniformConsensus> uc = requires(UniformConsensus.class);
     Positive<Console> con = requires(Console.class);
     private static final Logger logger =
-            LoggerFactory.getLogger(Application3a.class);
+            LoggerFactory.getLogger(Application4.class);
     private List<String> commands;
     private boolean blocking;
     private int currWaitDelay;
@@ -53,13 +53,21 @@ public class Application4 extends ComponentDefinition {
         subscribe(handleConsoleInput, con);
         subscribe(handleUcDecide, uc);
     }
+
+    private void initDecision(int maxInstance) {
+        decisions = new Integer[maxInstance];
+        for (int i = 0; i < decisions.length; i++) {
+            decisions[i] = null;
+        }
+    }
     
     Handler<Application4Init> handleInit = new Handler<Application4Init>() {
         public void handle(Application4Init event) {
             neighborSet = event.getNeighborSet();
             previousProposal = new HashSet<Integer>();
             currentProposal = new HashSet<Integer>();
-            decisions = new Integer[event.getMaxInstance()];
+
+            initDecision(event.getMaxInstance());
             self = event.getSelf();
             commands = new ArrayList<String>(Arrays.asList(event.getCommandScript().split(":")));
             commands.add("$DONE");
@@ -90,13 +98,13 @@ public class Application4 extends ComponentDefinition {
         public void handle(UcDecide e) {
             int id = e.getId();
             int val = e.getVal();
-            logger.info("received a decision from paxos: "+id);
+            logger.info("received a decision from paxos: " + id);
             previousProposal.remove(id);
             currentProposal.remove(id);
             decisions[id] = val;
-            if(blocking){
+            if (blocking) {
                 doDelay();
-            }else{
+            } else {
                 doNextCommand();
             }
         }
@@ -113,8 +121,8 @@ public class Application4 extends ComponentDefinition {
             currWaitDelay = Integer.parseInt(cmd.substring(1));
             previousProposal = new HashSet<Integer>(currentProposal);
             doDelay();
-        }else if (cmd.startsWith("P")) {
-            doPropose(Integer.parseInt(cmd.substring(1)),Integer.parseInt(cmd.substring(3)));
+        } else if (cmd.startsWith("P")) {
+            doPropose(cmd.substring(1).split("-"));
         } else if (cmd.startsWith("W")) {
             doWrite();
         } else if (cmd.startsWith("X")) {
@@ -146,11 +154,11 @@ public class Application4 extends ComponentDefinition {
 
         blocking = true;
     }
-    
-    private void doDelay(){
-        if(!previousProposal.isEmpty()){
+
+    private void doDelay() {
+        if (!previousProposal.isEmpty()) {
             blocking = true;
-        }else{
+        } else {
             doSleep(currWaitDelay);
         }
     }
@@ -163,14 +171,14 @@ public class Application4 extends ComponentDefinition {
         blocking = true;
     }
 
-    
-    private void doPropose(Integer id, Integer val) {
+    private void doPropose(String[] str) {
+        Integer id = Integer.parseInt(str[0]);
+        Integer val = Integer.parseInt(str[1]);
         logger.info("Process " + self.getId() + " proposed value " + val);
         currentProposal.add(id);
         trigger(new UcPropose(id, val), uc);
-    }   
-    
-    
+    }
+
     private void doRead() {
         logger.info("Process " + self.getId() + " reading...");
         trigger(new ReadRequest(0), uc);
@@ -181,7 +189,11 @@ public class Application4 extends ComponentDefinition {
         logger.info("Displaying results...");
         for (int i = 0; i < decisions.length; i++) {
             Integer integer = decisions[i];
-            logger.info("paxos id: " + i + " ===> decides: "+ integer);
+            if (!(integer == null)) {
+                logger.info("paxos id: " + i + " ===> decides: " + integer);
+            } else {
+                logger.info("paxos id: " + i + " ===> decides: null");
+            }
         }
     }
 }

@@ -3,17 +3,14 @@ package se.kth.ict.id2203.acp.ac;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.kth.ict.id2203.acp.AbortableConsensus;
 import se.kth.ict.id2203.acp.AcDecide;
 import se.kth.ict.id2203.acp.AcPropose;
-import se.kth.ict.id2203.acp.ac.*;
-import se.kth.ict.id2203.acp.ac.*;
-import se.kth.ict.id2203.acp.ac.*;
-import se.kth.ict.id2203.acp.ac.*;
-import se.kth.ict.id2203.acp.ac.*;
+import se.kth.ict.id2203.application.Application4;
 import se.kth.ict.id2203.bebport.BEB;
 import se.kth.ict.id2203.bebport.BebBroadcast;
-import se.kth.ict.id2203.bebport.beb.BasicBcast;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
 import se.kth.ict.id2203.pp2p.Pp2pSend;
 import se.sics.kompics.ComponentDefinition;
@@ -31,6 +28,8 @@ public class RWAbortableConsensus extends ComponentDefinition {
     Negative<AbortableConsensus> ac = provides(AbortableConsensus.class);
     Positive<BEB> beb = requires(BEB.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(Application4.class);
 
     public RWAbortableConsensus() {
         subscribe(handleInit, control);
@@ -57,22 +56,20 @@ public class RWAbortableConsensus extends ComponentDefinition {
 
     private void initInstance(int id) {
         if (!seenId.contains(id)) {
-            tempValue = new Integer[maxInstance];
-            tempValue[id] = -1;
-            val = new Integer[maxInstance];
-            val[id] = -1;
 
-            wAcks = new Integer[maxInstance];
-            rts = new Integer[maxInstance];
-            wts = new Integer[maxInstance];
+            tempValue[id] = null;
+
+            val[id] = null;
+
+
             wAcks[id] = 0;
             rts[id] = 0;
             wts[id] = 0;
-            
-            tstamp = new Integer[maxInstance];
+
+
             tstamp[id] = self.getId();
 
-            readSet = new Set[maxInstance];
+
             readSet[id] = new HashSet<AcValue>();
             readSet[id].clear();
 
@@ -86,13 +83,12 @@ public class RWAbortableConsensus extends ComponentDefinition {
         Iterator<AcValue> iter = set.iterator();
         while (iter.hasNext()) {
             AcValue val = iter.next();
-            if(val.ts > toReturn.ts){
+            if (val.ts > toReturn.ts) {
                 toReturn = val;
             }
         }
         return toReturn;
     }
-    
     Handler<RWACInit> handleInit = new Handler<RWACInit>() {
         @Override
         public void handle(RWACInit e) {
@@ -103,6 +99,13 @@ public class RWAbortableConsensus extends ComponentDefinition {
             N = allNodes.size();
             majority = (N / 2) + 1;
             maxInstance = e.getMaxInstance();
+            readSet = new Set[maxInstance];
+            tstamp = new Integer[maxInstance];
+            tempValue = new Integer[maxInstance];
+            val = new Integer[maxInstance];
+            wAcks = new Integer[maxInstance];
+            rts = new Integer[maxInstance];
+            wts = new Integer[maxInstance];
         }
     };
     Handler<AcPropose> handlePropose = new Handler<AcPropose>() {
@@ -142,14 +145,17 @@ public class RWAbortableConsensus extends ComponentDefinition {
         @Override
         public void handle(RAck e) {
             int id = e.getId();
-            int ts = e.getTs();
+            int ts = e.getWts();
             Integer v = e.getVal();
-            int sentts = e.getWts();
+            int sentts = e.getTs();
+
             if (sentts == tstamp[id]) {
+
                 readSet[id].add(new AcValue(ts, v));
                 if (readSet[id].size() == majority) {
+
                     AcValue acVal = highest(readSet[id]);
-                    if (!v.equals(null)) {
+                    if (!(v == null)) {
                         tempValue[id] = acVal.val;
                     }
                     trigger(new BebBroadcast(new Write(self, id, tstamp[id], tempValue[id])), beb);
@@ -164,9 +170,10 @@ public class RWAbortableConsensus extends ComponentDefinition {
             int ts = e.getTs();
             int v = e.getVal();
             initInstance(id);
-            if(rts[id] > ts || wts[id] > ts){
+
+            if (rts[id] > ts || wts[id] > ts) {
                 trigger(new Pp2pSend(e.getSource(), new NAck(self, id)), pp2p);
-            }else{
+            } else {
                 val[id] = v;
                 wts[id] = ts;
                 trigger(new Pp2pSend(e.getSource(), new WAck(self, id, ts)), pp2p);
@@ -178,9 +185,9 @@ public class RWAbortableConsensus extends ComponentDefinition {
         public void handle(WAck e) {
             int id = e.getId();
             int sentts = e.getTs();
-            if(sentts == tstamp[id]){
+            if (sentts == tstamp[id]) {
                 wAcks[id] = wAcks[id] + 1;
-                if(wAcks[id] == majority){
+                if (wAcks[id] == majority) {
                     readSet[id].clear();
                     wAcks[id] = 0;
                     trigger(new AcDecide(id, tempValue[id]), ac);

@@ -7,12 +7,22 @@ import se.sics.kompics.address.Address;
  * @author ALEX & fingolfin
  */
 public class Decided extends BebDeliver {
+    private final int id;
+    private final Integer val;
 
-    public Decided(Address source) {
-        super(source);
+
+    Decided(Address self, int id, Integer val) {
+        super(self);
+        this.id = id;
+        this.val = val;
     }
-    
-    
-    
+
+    public int getId() {
+        return id;
+    }
+
+    public Integer getVal() {
+        return val;
+    }
     
 }

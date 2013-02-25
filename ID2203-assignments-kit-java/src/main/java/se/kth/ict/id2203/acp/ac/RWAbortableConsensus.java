@@ -33,7 +33,13 @@ public class RWAbortableConsensus extends ComponentDefinition {
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
 
     public RWAbortableConsensus() {
-        /**/
+        subscribe(handleInit, control);
+        subscribe(handleNack, pp2p);
+        subscribe(handlePropose, ac);
+        subscribe(handleRack, pp2p);
+        subscribe(handleWack, pp2p);
+        subscribe(handleRead, beb);
+        subscribe(handleWrite, beb);
     }
     private Set<Integer> seenId;
     private int N;

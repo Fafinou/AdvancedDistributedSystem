@@ -8,7 +8,12 @@ import se.sics.kompics.Event;
  */
 public class AcPropose extends Event{
     private int id;
-    private int val;
+    private Integer val;
+
+    public AcPropose(int id, Integer val) {
+        this.id = id;
+        this.val = val;
+    }
 
     public int getId() {
         return id;

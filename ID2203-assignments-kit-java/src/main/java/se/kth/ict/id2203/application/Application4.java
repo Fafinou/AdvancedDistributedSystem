@@ -108,8 +108,6 @@ public class Application4 extends ComponentDefinition {
             doSleep(Integer.parseInt(cmd.substring(1)));
         }else if (cmd.startsWith("P")) {
             doPropose(Integer.parseInt(cmd.substring(1)));
-        }else if (cmd.startsWith("Dk")) {
-            doDk(Integer.parseInt(cmd.substring(1)));
         } else if (cmd.startsWith("W")) {
             doWrite(Integer.parseInt(cmd.substring(1)));
         } else if (cmd.startsWith("X")) {
@@ -154,20 +152,13 @@ public class Application4 extends ComponentDefinition {
 
     
     private void doPropose(int parseInt) {
-        logger.info("Process " + self.getId() + " Trying to write the message " + parseInt);
-        trigger(new WriteRequest(0, parseInt), uc);
-        blocking = true;
-    }
-    
-    private void doDk(int parseInt) {
         logger.info("Process " + self.getId() + " proposed value " + parseInt);
-        trigger(new UcPropose(0, parseInt), uc);
+        trigger(new Uc(0, parseInt), uc);
         blocking = true;
-    }
-    
+    }   
     
     private void doWrite(int parseInt) {
-        logger.info("Process " + self.getId() + " Trying to write the message " + parseInt);
+        logger.info("Process " + self.getId() + " Trying to write values " + parseInt);
         trigger(new WriteRequest(0, parseInt), uc);
         blocking = true;
     }

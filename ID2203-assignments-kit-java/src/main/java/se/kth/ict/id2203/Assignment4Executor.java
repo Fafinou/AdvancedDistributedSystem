@@ -45,7 +45,7 @@ public class Assignment4Executor {
             }
         };
         //scenarioEx1.executeOn(topologyEx3);
-        scenarioEx3b.executeOn(topologyEx3);
+        scenarioEx3a.executeOn(topologyEx3);
         //scenarioEx4.executeOn(topologyEx4);
 
 

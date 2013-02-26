@@ -98,7 +98,7 @@ public class Application4 extends ComponentDefinition {
         public void handle(UcDecide e) {
             int id = e.getId();
             int val = e.getVal();
-            logger.info("received a decision from paxos: " + id);
+            logger.info("received a decision from paxos: " + id + " ===> Value: " + val);
             previousProposal.remove(id);
             currentProposal.remove(id);
             decisions[id] = val;

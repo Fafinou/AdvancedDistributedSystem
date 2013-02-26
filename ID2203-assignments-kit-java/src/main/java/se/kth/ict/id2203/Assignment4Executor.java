@@ -14,8 +14,8 @@ public class Assignment4Executor {
         Topology topologyEx3 = new Topology() {
             {
                 node(1, "127.0.0.1", 22030);
-                //node(2, "127.0.0.1", 22031);
-                //node(3, "127.0.0.1", 22032);
+                node(2, "127.0.0.1", 22031);
+                node(3, "127.0.0.1", 22032);
 
                 defaultLinks(1000, 0);
             }
@@ -44,8 +44,8 @@ public class Assignment4Executor {
                 command(1, "P1-7:D100:P3-5:P4-9:D20000:W");
             }
         };
-        scenarioEx1.executeOn(topologyEx3);
-        //scenarioEx3b.executeOn(topologyEx3);
+        //scenarioEx1.executeOn(topologyEx3);
+        scenarioEx3b.executeOn(topologyEx3);
         //scenarioEx4.executeOn(topologyEx4);
 
 

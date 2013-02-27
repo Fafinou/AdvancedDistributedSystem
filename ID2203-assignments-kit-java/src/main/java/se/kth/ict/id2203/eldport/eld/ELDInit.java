@@ -14,21 +14,27 @@ import se.sics.kompics.launch.Topology;
 public class ELDInit extends Init {
     private Topology topology;
     private int delta;
+    private int timeDelay;
 
 
-    public ELDInit(Topology topology, int delta) {
+    public ELDInit(Topology topology, int delta, int timeDelay) {
         this.topology = topology;
         this.delta = delta;
+        this.timeDelay = timeDelay;
     }
     
     
 
     public Topology getTopology() {
-        return topology;
+        return this.topology;
     }
 
     int getDelta() {
         return this.delta;
+    }
+
+    int getTimeDelay() {
+        return this.timeDelay;
     }
     
     

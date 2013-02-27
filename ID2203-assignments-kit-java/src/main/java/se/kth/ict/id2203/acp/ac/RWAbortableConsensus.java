@@ -82,9 +82,9 @@ public class RWAbortableConsensus extends ComponentDefinition {
         AcValue toReturn = new AcValue(-1, null);
         Iterator<AcValue> iter = set.iterator();
         while (iter.hasNext()) {
-            AcValue val = iter.next();
-            if (val.ts > toReturn.ts) {
-                toReturn = val;
+            AcValue val1 = iter.next();
+            if (val1.ts > toReturn.ts) {
+                toReturn = val1;
             }
         }
         return toReturn;
@@ -155,7 +155,7 @@ public class RWAbortableConsensus extends ComponentDefinition {
                 if (readSet[id].size() == majority) {
 
                     AcValue acVal = highest(readSet[id]);
-                    if (!(v == null)) {
+                    if (!(acVal.val == null)) {
                         tempValue[id] = acVal.val;
                     }
                     trigger(new BebBroadcast(new Write(self, id, tstamp[id], tempValue[id])), beb);

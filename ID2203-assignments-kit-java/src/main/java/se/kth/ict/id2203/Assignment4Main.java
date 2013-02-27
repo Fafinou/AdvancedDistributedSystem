@@ -96,7 +96,7 @@ public class Assignment4Main extends ComponentDefinition {
         trigger(new UcInit(topology, maxInstance), uc.control());
         trigger(new RWACInit(topology, maxInstance), ac.control());
         trigger(new BasicBcastInit(topology), beb.control());
-        trigger(new ELDInit(topology, 1000), eld.control());
+        trigger(new ELDInit(topology, 1000, 1000), eld.control());
     
     // connect the components
         connect(app.required(UniformConsensus.class), uc.provided(UniformConsensus.class));

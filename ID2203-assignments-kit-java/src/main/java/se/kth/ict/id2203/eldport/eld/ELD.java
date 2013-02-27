@@ -7,6 +7,9 @@ package se.kth.ict.id2203.eldport.eld;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.kth.ict.id2203.application.Application4;
 import se.kth.ict.id2203.eldport.EventualLeaderDetection;
 import se.kth.ict.id2203.eldport.Trust;
 import se.kth.ict.id2203.pp2p.PerfectPointToPointLink;
@@ -28,6 +31,8 @@ public class ELD extends ComponentDefinition {
     Negative<EventualLeaderDetection> eld = provides(EventualLeaderDetection.class);
     Positive<PerfectPointToPointLink> pp2p = requires(PerfectPointToPointLink.class);
     Positive<Timer> timer = requires(Timer.class);
+        private static final Logger logger =
+            LoggerFactory.getLogger(Application4.class);
 
     public ELD() {
         /*subscribe(eachHandler, respective port);*/
@@ -45,12 +50,15 @@ public class ELD extends ComponentDefinition {
     private Address electLeader(Set<Address> addressSet) {
         Address toReturn = new Address(null, 42, 32000000);
         Iterator<Address> iter = addressSet.iterator();
+        logger.info("election on: "+ addressSet.toString());
         while (iter.hasNext()) {
             Address address = iter.next();
             if (address.getId() < toReturn.getId()) {
+                
                 toReturn = address;
             }
         }
+        
         return toReturn;
     }
 
@@ -74,12 +82,14 @@ public class ELD extends ComponentDefinition {
             allNodes = new HashSet<Address>(e.getTopology().getAllAddresses());
             self = e.getTopology().getSelfAddress();
             delta = e.getDelta();
+            //logger.info(allNodes.toString());
             leader = electLeader(allNodes);
+            period = e.getTimeDelay();
             trigger(new Trust(leader), eld);
-
-            sendHeartBeat(allNodes);
+            
             candidateSet = new HashSet<Address>();
             candidateSet.clear();
+            sendHeartBeat(allNodes);
             startTimer(period);
         }
     };
@@ -87,7 +97,8 @@ public class ELD extends ComponentDefinition {
         @Override
         public void handle(EldTimeOut e) {
             Address newLeader = electLeader(candidateSet);
-            if (leader != newLeader && newLeader.getIp() != null) {
+            
+            if (!(leader.equals(newLeader)) && newLeader.getIp() != null) {
                 period = period + delta;
                 leader = newLeader;
                 trigger(new Trust(leader), eld);

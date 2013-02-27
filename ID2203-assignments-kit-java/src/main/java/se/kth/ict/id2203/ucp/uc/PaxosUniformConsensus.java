@@ -76,8 +76,10 @@ public class PaxosUniformConsensus extends ComponentDefinition {
     Handler<Trust> handleTrust = new Handler<Trust>() {
         @Override
         public void handle(Trust e) {
+            logger.info("we trust " + e.getLeader() + "as a leader");
             if (self.equals(e.getLeader())) {
                 leader = true;
+                
                 Iterator<Integer> iterId = seenIds.iterator();
                 while (iterId.hasNext()) {
                     int id = iterId.next();
@@ -95,6 +97,7 @@ public class PaxosUniformConsensus extends ComponentDefinition {
             int v = e.getVal();
             initInstance(id);
             proposal[id] = v;
+            logger.info("proposal is now: "+v);
             tryPropose(id);
         }
     };
@@ -104,8 +107,10 @@ public class PaxosUniformConsensus extends ComponentDefinition {
             int id = e.getId();
             Integer result = e.getVal();
             if (!(result == null)) {
+                logger.info("value accepted: "+e.getVal());
                 trigger(new BebBroadcast(new Decided(self, id, result)), beb);
             } else {
+                logger.info("aborting proposal "+ proposal[id] +"...");
                 proposed[id] = false;
                 tryPropose(id);
             }
@@ -127,6 +132,7 @@ public class PaxosUniformConsensus extends ComponentDefinition {
     private void tryPropose(int id) {
 
         if (leader && !proposed[id] && !(proposal[id] == null)) {
+            logger.info("leader: "+self +" ... I propose");
             proposed[id] = true;
             trigger(new AcPropose(id, proposal[id]), ac);
         }
